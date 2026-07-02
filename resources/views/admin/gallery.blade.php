@@ -1,7 +1,12 @@
 <x-dash-layout title="Kelola Galeri" active="gallery" role="admin">
 
 <div class="panel">
-    <div class="panel-head"><h2>Tambah Foto ke Galeri</h2></div>
+    <div class="panel-head">
+        <h2>{{ $editData ? 'Edit Foto Galeri' : 'Tambah Foto ke Galeri' }}</h2>
+        @if ($editData)
+            <a href="{{ route('admin.gallery.index') }}" class="btn btn-outline btn-sm">Batal Edit</a>
+        @endif
+    </div>
 
     @if ($errors->any())
         @foreach ($errors->all() as $error)
@@ -11,21 +16,30 @@
 
     <form method="POST" action="{{ route('admin.gallery.store') }}" enctype="multipart/form-data">
         @csrf
+        <input type="hidden" name="id" value="{{ $editData->id ?? '' }}">
         <div class="form-row">
             <div class="form-group">
                 <label>Judul Foto</label>
-                <input type="text" name="title" required>
+                <input type="text" name="title" value="{{ old('title', $editData->title ?? '') }}" required>
             </div>
             <div class="form-group">
                 <label>Kategori</label>
-                <input type="text" name="category" placeholder="Portrait, Prewedding, dll" value="Umum">
+                <input type="text" name="category" placeholder="Portrait, Prewedding, dll" value="{{ old('category', $editData->category ?? 'Umum') }}">
             </div>
         </div>
         <div class="form-group">
-            <label>File Gambar</label>
-            <input type="file" name="image" accept=".jpg,.jpeg,.png,.webp" required>
+            <label>File Gambar {{ $editData ? '(kosongkan jika tidak ingin mengganti)' : '' }}</label>
+            @if ($editData && $editData->image)
+                @php $currentImgPath = public_path('uploads/gallery/' . $editData->image); @endphp
+                @if (file_exists($currentImgPath))
+                <div style="margin-bottom:10px;">
+                    <img src="{{ asset('uploads/gallery/' . $editData->image) }}" alt="{{ $editData->title }}" style="width:100px;height:100px;object-fit:cover;border-radius:6px;">
+                </div>
+                @endif
+            @endif
+            <input type="file" name="image" accept=".jpg,.jpeg,.png,.webp" {{ $editData ? '' : 'required' }}>
         </div>
-        <button type="submit" class="btn btn-primary">Unggah Foto</button>
+        <button type="submit" class="btn btn-primary">{{ $editData ? 'Simpan Perubahan' : 'Unggah Foto' }}</button>
     </form>
 </div>
 
@@ -46,6 +60,7 @@
                 <td>{{ $g->title }}</td>
                 <td>{{ $g->category }}</td>
                 <td class="action-icons">
+                    <a href="{{ route('admin.gallery.index', ['edit' => $g->id]) }}">Edit</a>
                     <form method="POST" action="{{ route('admin.gallery.destroy', $g->id) }}" onsubmit="return confirm('Hapus foto ini dari galeri?');" style="display:inline;">
                         @csrf
                         <button type="submit" class="danger" style="background:none;border:none;cursor:pointer;padding:0;">Hapus</button>

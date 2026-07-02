@@ -1,23 +1,21 @@
 <x-layout title="Beranda">
 
 <section class="hero">
+    <div class="hero-bg-slider">
+        @foreach ($heroImages as $i => $img)
+        <div class="hero-slide {{ $i === 0 ? 'active' : '' }}" style="background-image:url('{{ asset('img/hero/'.$img) }}')"></div>
+        @endforeach
+    </div>
     <div class="container hero-content">
-        <span class="eyebrow">Studio Foto Profesional</span>
-        <h1>Abadikan Momen<br>dengan Sentuhan Elegan</h1>
+        <span class="eyebrow">Home Photoworks</span>
+        <h1>Abadikan Momen dengan Sentuhan Elegan</h1>
         <p>Home Photoworks menghadirkan pengalaman fotografi studio modern — memadukan pencahayaan profesional, komposisi artistik, dan hasil akhir yang timeless dalam nuansa monokrom.</p>
         <div class="hero-actions">
-            <a href="{{ route('layanan') }}" class="btn btn-primary">Lihat Paket Layanan</a>
+            <a href="{{ route('layanan') }}" class="btn btn-light">Lihat Paket Layanan</a>
             <a href="{{ route('galeri') }}" class="btn btn-light">Jelajahi Galeri</a>
         </div>
     </div>
 </section>
-
-<div class="stats-strip">
-    <div class="stat-item"><strong>8+</strong><span>Tahun Pengalaman</span></div>
-    <div class="stat-item"><strong>1.200+</strong><span>Sesi Terselesaikan</span></div>
-    <div class="stat-item"><strong>6</strong><span>Paket Layanan</span></div>
-    <div class="stat-item"><strong>4.9/5</strong><span>Rating Klien</span></div>
-</div>
 
 <section class="section">
     <div class="container">
@@ -28,9 +26,10 @@
         </div>
         <div class="grid-3">
             @foreach ($services as $s)
+            @php $svcImgPath = $s->image ? public_path('uploads/services/' . $s->image) : null; @endphp
             <div class="service-card">
                 <div class="service-thumb">
-                    <img src="{{ asset('img/placeholder-service.jpg') }}" alt="{{ $s->name }}">
+                    <img src="{{ $svcImgPath && file_exists($svcImgPath) ? asset('uploads/services/' . $s->image) : asset('img/placeholder-service.jpg') }}" alt="{{ $s->name }}">
                 </div>
                 <div class="service-body">
                     <h3>{{ $s->name }}</h3>
@@ -39,7 +38,7 @@
                         <span class="price-tag">Rp {{ number_format($s->price, 0, ',', '.') }}</span>
                         <span class="duration-tag">{{ (int) $s->duration_minutes }} menit</span>
                     </div>
-                    <a href="{{ route('layanan') }}" class="btn btn-outline btn-block">Detail Paket</a>
+                    <a href="{{ route('layanan.show', $s->id) }}" class="btn btn-outline btn-block">Detail Paket</a>
                 </div>
             </div>
             @endforeach
@@ -56,8 +55,9 @@
         </div>
         <div class="gallery-grid">
             @foreach ($galleryItems as $g)
+            @php $galImgPath = public_path('uploads/gallery/' . $g->image); @endphp
             <div class="gallery-item">
-                <img src="{{ asset('img/placeholder-gallery.jpg') }}" alt="{{ $g->title }}">
+                <img src="{{ file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg') }}" alt="{{ $g->title }}">
                 <div class="gallery-caption">
                     <span>{{ $g->category }}</span>
                     <h4>{{ $g->title }}</h4>

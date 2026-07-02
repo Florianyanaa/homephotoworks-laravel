@@ -10,23 +10,21 @@
 <?php $component->withAttributes(['title' => 'Beranda']); ?>
 
 <section class="hero">
+    <div class="hero-bg-slider">
+        <?php $__currentLoopData = $heroImages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $img): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        <div class="hero-slide <?php echo e($i === 0 ? 'active' : ''); ?>" style="background-image:url('<?php echo e(asset('img/hero/'.$img)); ?>')"></div>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+    </div>
     <div class="container hero-content">
-        <span class="eyebrow">Studio Foto Profesional</span>
-        <h1>Abadikan Momen<br>dengan Sentuhan Elegan</h1>
+        <span class="eyebrow">Home Photoworks</span>
+        <h1>Abadikan Momen dengan Sentuhan Elegan</h1>
         <p>Home Photoworks menghadirkan pengalaman fotografi studio modern — memadukan pencahayaan profesional, komposisi artistik, dan hasil akhir yang timeless dalam nuansa monokrom.</p>
         <div class="hero-actions">
-            <a href="<?php echo e(route('layanan')); ?>" class="btn btn-primary">Lihat Paket Layanan</a>
+            <a href="<?php echo e(route('layanan')); ?>" class="btn btn-light">Lihat Paket Layanan</a>
             <a href="<?php echo e(route('galeri')); ?>" class="btn btn-light">Jelajahi Galeri</a>
         </div>
     </div>
 </section>
-
-<div class="stats-strip">
-    <div class="stat-item"><strong>8+</strong><span>Tahun Pengalaman</span></div>
-    <div class="stat-item"><strong>1.200+</strong><span>Sesi Terselesaikan</span></div>
-    <div class="stat-item"><strong>6</strong><span>Paket Layanan</span></div>
-    <div class="stat-item"><strong>4.9/5</strong><span>Rating Klien</span></div>
-</div>
 
 <section class="section">
     <div class="container">
@@ -37,9 +35,10 @@
         </div>
         <div class="grid-3">
             <?php $__currentLoopData = $services; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <?php $svcImgPath = $s->image ? public_path('uploads/services/' . $s->image) : null; ?>
             <div class="service-card">
                 <div class="service-thumb">
-                    <img src="<?php echo e(asset('img/placeholder-service.jpg')); ?>" alt="<?php echo e($s->name); ?>">
+                    <img src="<?php echo e($svcImgPath && file_exists($svcImgPath) ? asset('uploads/services/' . $s->image) : asset('img/placeholder-service.jpg')); ?>" alt="<?php echo e($s->name); ?>">
                 </div>
                 <div class="service-body">
                     <h3><?php echo e($s->name); ?></h3>
@@ -48,7 +47,7 @@
                         <span class="price-tag">Rp <?php echo e(number_format($s->price, 0, ',', '.')); ?></span>
                         <span class="duration-tag"><?php echo e((int) $s->duration_minutes); ?> menit</span>
                     </div>
-                    <a href="<?php echo e(route('layanan')); ?>" class="btn btn-outline btn-block">Detail Paket</a>
+                    <a href="<?php echo e(route('layanan.show', $s->id)); ?>" class="btn btn-outline btn-block">Detail Paket</a>
                 </div>
             </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -65,8 +64,9 @@
         </div>
         <div class="gallery-grid">
             <?php $__currentLoopData = $galleryItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $g): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <?php $galImgPath = public_path('uploads/gallery/' . $g->image); ?>
             <div class="gallery-item">
-                <img src="<?php echo e(asset('img/placeholder-gallery.jpg')); ?>" alt="<?php echo e($g->title); ?>">
+                <img src="<?php echo e(file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg')); ?>" alt="<?php echo e($g->title); ?>">
                 <div class="gallery-caption">
                     <span><?php echo e($g->category); ?></span>
                     <h4><?php echo e($g->title); ?></h4>

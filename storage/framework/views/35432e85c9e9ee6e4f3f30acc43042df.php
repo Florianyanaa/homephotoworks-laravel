@@ -23,7 +23,7 @@
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     <?php endif; ?>
 
-    <form method="POST" action="<?php echo e(route('admin.services.store')); ?>">
+    <form method="POST" action="<?php echo e(route('admin.services.store')); ?>" enctype="multipart/form-data">
         <?php echo csrf_field(); ?>
         <input type="hidden" name="id" value="<?php echo e($editData->id ?? 0); ?>">
         <div class="form-row">
@@ -55,6 +55,18 @@
                 </div>
             </div>
         </div>
+        <div class="form-group">
+            <label>Foto Paket <?php echo e($editData ? '(kosongkan jika tidak ingin mengganti)' : '(opsional)'); ?></label>
+            <?php if($editData && $editData->image): ?>
+                <?php $currentImgPath = public_path('uploads/services/' . $editData->image); ?>
+                <?php if(file_exists($currentImgPath)): ?>
+                <div style="margin-bottom:10px;">
+                    <img src="<?php echo e(asset('uploads/services/' . $editData->image)); ?>" alt="<?php echo e($editData->name); ?>" style="width:100px;height:100px;object-fit:cover;border-radius:6px;">
+                </div>
+                <?php endif; ?>
+            <?php endif; ?>
+            <input type="file" name="image" accept=".jpg,.jpeg,.png,.webp">
+        </div>
         <button type="submit" class="btn btn-primary"><?php echo e($editData ? 'Simpan Perubahan' : 'Tambah Layanan'); ?></button>
     </form>
 </div>
@@ -66,11 +78,15 @@
     <?php else: ?>
     <table>
         <thead>
-            <tr><th>Nama</th><th>Harga</th><th>Durasi</th><th>Status</th><th>Aksi</th></tr>
+            <tr><th>Foto</th><th>Nama</th><th>Harga</th><th>Durasi</th><th>Status</th><th>Aksi</th></tr>
         </thead>
         <tbody>
             <?php $__currentLoopData = $services; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <?php $svcImgPath = $s->image ? public_path('uploads/services/' . $s->image) : null; ?>
             <tr>
+                <td>
+                    <img src="<?php echo e($svcImgPath && file_exists($svcImgPath) ? asset('uploads/services/' . $s->image) : asset('img/placeholder-service.jpg')); ?>" alt="<?php echo e($s->name); ?>" style="width:60px;height:60px;object-fit:cover;border-radius:4px;">
+                </td>
                 <td><?php echo e($s->name); ?></td>
                 <td>Rp <?php echo e(number_format($s->price, 0, ',', '.')); ?></td>
                 <td><?php echo e((int) $s->duration_minutes); ?> menit</td>

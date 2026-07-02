@@ -30,9 +30,9 @@
                     <strong>{{ $b->user->full_name }}</strong><br>
                     <span style="color:#8a8a8a; font-size:12px;">{{ $b->user->email }}</span>
                 </td>
-                <td>{{ $b->service->name }}</td>
+                <td>{{ $b->service->name }}@if($b->tier_label)<br><span style="color:#8a8a8a;font-size:12px;">{{ $b->tier_label }}</span>@endif</td>
                 <td>{{ \Carbon\Carbon::parse($b->booking_date)->translatedFormat('d F Y') }}<br><span style="color:#8a8a8a; font-size:12px;">{{ substr($b->booking_time, 0, 5) }} WIB</span></td>
-                <td>Rp {{ number_format($b->service->price, 0, ',', '.') }}</td>
+                <td>{{ $b->tier_price !== null ? 'Rp ' . number_format($b->tier_price, 0, ',', '.') : 'Sesuai Keikhlasan' }}</td>
                 <td>
                     <form method="POST" action="{{ route('admin.bookings.status') }}" style="display:inline;">
                         @csrf

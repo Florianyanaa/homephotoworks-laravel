@@ -33,7 +33,7 @@
             <?php $__currentLoopData = $recentBookings; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $b): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <tr>
                 <td><?php echo e($b->user->full_name); ?></td>
-                <td><?php echo e($b->service->name); ?></td>
+                <td><?php echo e($b->service->name); ?><?php if($b->tier_label): ?><br><span style="color:#8a8a8a;font-size:12px;"><?php echo e($b->tier_label); ?></span><?php endif; ?></td>
                 <td><?php echo e(\Carbon\Carbon::parse($b->booking_date)->translatedFormat('d F Y')); ?></td>
                 <td><?php echo e(substr($b->booking_time, 0, 5)); ?></td>
                 <td><?php echo $__env->make('partials.status-badge', ['status' => $b->status], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?></td>

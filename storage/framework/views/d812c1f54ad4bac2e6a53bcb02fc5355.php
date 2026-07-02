@@ -39,9 +39,9 @@
                     <strong><?php echo e($b->user->full_name); ?></strong><br>
                     <span style="color:#8a8a8a; font-size:12px;"><?php echo e($b->user->email); ?></span>
                 </td>
-                <td><?php echo e($b->service->name); ?></td>
+                <td><?php echo e($b->service->name); ?><?php if($b->tier_label): ?><br><span style="color:#8a8a8a;font-size:12px;"><?php echo e($b->tier_label); ?></span><?php endif; ?></td>
                 <td><?php echo e(\Carbon\Carbon::parse($b->booking_date)->translatedFormat('d F Y')); ?><br><span style="color:#8a8a8a; font-size:12px;"><?php echo e(substr($b->booking_time, 0, 5)); ?> WIB</span></td>
-                <td>Rp <?php echo e(number_format($b->service->price, 0, ',', '.')); ?></td>
+                <td><?php echo e($b->tier_price !== null ? 'Rp ' . number_format($b->tier_price, 0, ',', '.') : 'Sesuai Keikhlasan'); ?></td>
                 <td>
                     <form method="POST" action="<?php echo e(route('admin.bookings.status')); ?>" style="display:inline;">
                         <?php echo csrf_field(); ?>

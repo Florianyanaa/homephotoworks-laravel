@@ -25,4 +25,15 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
+    // Hero background slideshow — otomatis berganti foto tiap beberapa detik
+    var heroSlides = document.querySelectorAll('.hero-slide');
+    if (heroSlides.length > 1) {
+        var currentSlide = 0;
+        setInterval(function () {
+            heroSlides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % heroSlides.length;
+            heroSlides[currentSlide].classList.add('active');
+        }, 6000);
+    }
 });

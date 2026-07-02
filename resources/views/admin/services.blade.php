@@ -14,7 +14,7 @@
         @endforeach
     @endif
 
-    <form method="POST" action="{{ route('admin.services.store') }}">
+    <form method="POST" action="{{ route('admin.services.store') }}" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="id" value="{{ $editData->id ?? 0 }}">
         <div class="form-row">
@@ -46,6 +46,18 @@
                 </div>
             </div>
         </div>
+        <div class="form-group">
+            <label>Foto Paket {{ $editData ? '(kosongkan jika tidak ingin mengganti)' : '(opsional)' }}</label>
+            @if ($editData && $editData->image)
+                @php $currentImgPath = public_path('uploads/services/' . $editData->image); @endphp
+                @if (file_exists($currentImgPath))
+                <div style="margin-bottom:10px;">
+                    <img src="{{ asset('uploads/services/' . $editData->image) }}" alt="{{ $editData->name }}" style="width:100px;height:100px;object-fit:cover;border-radius:6px;">
+                </div>
+                @endif
+            @endif
+            <input type="file" name="image" accept=".jpg,.jpeg,.png,.webp">
+        </div>
         <button type="submit" class="btn btn-primary">{{ $editData ? 'Simpan Perubahan' : 'Tambah Layanan' }}</button>
     </form>
 </div>
@@ -57,11 +69,15 @@
     @else
     <table>
         <thead>
-            <tr><th>Nama</th><th>Harga</th><th>Durasi</th><th>Status</th><th>Aksi</th></tr>
+            <tr><th>Foto</th><th>Nama</th><th>Harga</th><th>Durasi</th><th>Status</th><th>Aksi</th></tr>
         </thead>
         <tbody>
             @foreach ($services as $s)
+            @php $svcImgPath = $s->image ? public_path('uploads/services/' . $s->image) : null; @endphp
             <tr>
+                <td>
+                    <img src="{{ $svcImgPath && file_exists($svcImgPath) ? asset('uploads/services/' . $s->image) : asset('img/placeholder-service.jpg') }}" alt="{{ $s->name }}" style="width:60px;height:60px;object-fit:cover;border-radius:4px;">
+                </td>
                 <td>{{ $s->name }}</td>
                 <td>Rp {{ number_format($s->price, 0, ',', '.') }}</td>
                 <td>{{ (int) $s->duration_minutes }} menit</td>

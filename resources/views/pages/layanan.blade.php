@@ -4,7 +4,7 @@
     <div class="container">
         <span class="eyebrow">Paket &amp; Layanan</span>
         <h1>Pilih Paket Sesuai Kebutuhan Anda</h1>
-        <p>Semua paket sudah termasuk sesi foto studio, pengarahan gaya, dan hasil edit profesional.</p>
+        <p>Semua paket sudah termasuk sesi foto studio, pengarahan gaya, dan hasil edit profesional. Klik salah satu paket untuk melihat pilihan Seikhlasnya, Small, Medium, dan Large.</p>
     </div>
 </section>
 
@@ -12,26 +12,21 @@
     <div class="container">
         <div class="grid-3">
             @foreach ($services as $s)
-            <div class="service-card">
+            @php $svcImgPath = $s->image ? public_path('uploads/services/' . $s->image) : null; @endphp
+            <a href="{{ route('layanan.show', $s->id) }}" class="service-card service-card-link">
                 <div class="service-thumb">
-                    <img src="{{ asset('img/placeholder-service.jpg') }}" alt="{{ $s->name }}">
+                    <img src="{{ $svcImgPath && file_exists($svcImgPath) ? asset('uploads/services/' . $s->image) : asset('img/placeholder-service.jpg') }}" alt="{{ $s->name }}">
                 </div>
                 <div class="service-body">
                     <h3>{{ $s->name }}</h3>
                     <p>{{ $s->description }}</p>
                     <div class="service-meta">
-                        <span class="price-tag">Rp {{ number_format($s->price, 0, ',', '.') }}</span>
+                        <span class="price-tag">Mulai Rp {{ number_format($s->price, 0, ',', '.') }}</span>
                         <span class="duration-tag">{{ (int) $s->duration_minutes }} menit</span>
                     </div>
-                    @auth
-                        @if (!auth()->user()->isAdmin())
-                            <a href="{{ route('user.booking.create', ['service_id' => $s->id]) }}" class="btn btn-primary btn-block">Booking Paket Ini</a>
-                        @endif
-                    @else
-                        <a href="{{ route('login') }}" class="btn btn-primary btn-block">Masuk untuk Booking</a>
-                    @endauth
+                    <span class="btn btn-outline btn-block">Lihat Pilihan Paket &rarr;</span>
                 </div>
-            </div>
+            </a>
             @endforeach
         </div>
     </div>

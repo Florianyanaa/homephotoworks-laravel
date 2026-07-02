@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class ServiceController extends Controller
 {
@@ -28,10 +29,13 @@ class ServiceController extends Controller
             'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'gt:0'],
             'duration_minutes' => ['required', 'integer', 'gt:0'],
+            'image' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ], [
             'name.required' => 'Nama, harga, dan durasi wajib diisi dengan benar.',
             'price.gt' => 'Nama, harga, dan durasi wajib diisi dengan benar.',
             'duration_minutes.gt' => 'Nama, harga, dan durasi wajib diisi dengan benar.',
+            'image.mimes' => 'Format gambar harus jpg, jpeg, png, atau webp.',
+            'image.max' => 'Ukuran gambar maksimal 5MB.',
         ]);
 
         $payload = [
@@ -41,6 +45,30 @@ class ServiceController extends Controller
             'duration_minutes' => $data['duration_minutes'],
             'is_active' => $request->boolean('is_active'),
         ];
+
+        if ($request->hasFile('image')) {
+            $uploadDir = public_path('uploads/services');
+            if (! File::isDirectory($uploadDir)) {
+                File::makeDirectory($uploadDir, 0755, true);
+            }
+
+            // Hapus foto lama kalau sedang edit dan upload foto baru
+            if (! empty($data['id'])) {
+                $existing = Service::find($data['id']);
+                if ($existing && $existing->image) {
+                    $oldPath = public_path('uploads/services/'.$existing->image);
+                    if (File::exists($oldPath)) {
+                        File::delete($oldPath);
+                    }
+                }
+            }
+
+            $ext = $request->file('image')->getClientOriginalExtension();
+            $fileName = 'svc_'.time().'_'.random_int(1000, 9999).'.'.$ext;
+            $request->file('image')->move($uploadDir, $fileName);
+
+            $payload['image'] = $fileName;
+        }
 
         if (! empty($data['id'])) {
             Service::where('id', $data['id'])->update($payload);
@@ -55,6 +83,14 @@ class ServiceController extends Controller
 
     public function destroy(int $id)
     {
+        $service = Service::find($id);
+        if ($service && $service->image) {
+            $path = public_path('uploads/services/'.$service->image);
+            if (File::exists($path)) {
+                File::delete($path);
+            }
+        }
+
         Service::where('id', $id)->delete();
 
         session()->flash('flash', ['type' => 'success', 'message' => 'Layanan berhasil dihapus.']);

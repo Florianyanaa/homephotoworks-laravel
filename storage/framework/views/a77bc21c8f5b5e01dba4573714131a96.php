@@ -30,9 +30,9 @@
         <tbody>
             <?php $__currentLoopData = $recent; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $b): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <tr>
-                <td><?php echo e($b->service->name); ?></td>
+                <td><?php echo e($b->service->name); ?><?php if($b->tier_label): ?><br><span style="color:#8a8a8a;font-size:12px;"><?php echo e($b->tier_label); ?></span><?php endif; ?></td>
                 <td><?php echo e(\Carbon\Carbon::parse($b->booking_date)->translatedFormat('d F Y')); ?> &bull; <?php echo e(substr($b->booking_time, 0, 5)); ?></td>
-                <td>Rp <?php echo e(number_format($b->service->price, 0, ',', '.')); ?></td>
+                <td><?php echo e($b->tier_price !== null ? 'Rp ' . number_format($b->tier_price, 0, ',', '.') : 'Sesuai Keikhlasan'); ?></td>
                 <td><?php echo $__env->make('partials.status-badge', ['status' => $b->status], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?></td>
             </tr>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

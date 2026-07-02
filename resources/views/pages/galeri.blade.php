@@ -15,8 +15,9 @@
         @else
         <div class="gallery-grid">
             @foreach ($galleryItems as $g)
+            @php $galImgPath = public_path('uploads/gallery/' . $g->image); @endphp
             <div class="gallery-item">
-                <img src="{{ asset('img/placeholder-gallery.jpg') }}" alt="{{ $g->title }}">
+                <img src="{{ file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg') }}" alt="{{ $g->title }}">
                 <div class="gallery-caption">
                     <span>{{ $g->category }}</span>
                     <h4>{{ $g->title }}</h4>

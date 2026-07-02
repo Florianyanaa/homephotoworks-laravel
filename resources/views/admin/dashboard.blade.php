@@ -24,7 +24,7 @@
             @foreach ($recentBookings as $b)
             <tr>
                 <td>{{ $b->user->full_name }}</td>
-                <td>{{ $b->service->name }}</td>
+                <td>{{ $b->service->name }}@if($b->tier_label)<br><span style="color:#8a8a8a;font-size:12px;">{{ $b->tier_label }}</span>@endif</td>
                 <td>{{ \Carbon\Carbon::parse($b->booking_date)->translatedFormat('d F Y') }}</td>
                 <td>{{ substr($b->booking_time, 0, 5) }}</td>
                 <td>@include('partials.status-badge', ['status' => $b->status])</td>

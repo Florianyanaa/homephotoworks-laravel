@@ -10,7 +10,12 @@
 <?php $component->withAttributes(['title' => 'Kelola Galeri','active' => 'gallery','role' => 'admin']); ?>
 
 <div class="panel">
-    <div class="panel-head"><h2>Tambah Foto ke Galeri</h2></div>
+    <div class="panel-head">
+        <h2><?php echo e($editData ? 'Edit Foto Galeri' : 'Tambah Foto ke Galeri'); ?></h2>
+        <?php if($editData): ?>
+            <a href="<?php echo e(route('admin.gallery.index')); ?>" class="btn btn-outline btn-sm">Batal Edit</a>
+        <?php endif; ?>
+    </div>
 
     <?php if($errors->any()): ?>
         <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -20,21 +25,30 @@
 
     <form method="POST" action="<?php echo e(route('admin.gallery.store')); ?>" enctype="multipart/form-data">
         <?php echo csrf_field(); ?>
+        <input type="hidden" name="id" value="<?php echo e($editData->id ?? ''); ?>">
         <div class="form-row">
             <div class="form-group">
                 <label>Judul Foto</label>
-                <input type="text" name="title" required>
+                <input type="text" name="title" value="<?php echo e(old('title', $editData->title ?? '')); ?>" required>
             </div>
             <div class="form-group">
                 <label>Kategori</label>
-                <input type="text" name="category" placeholder="Portrait, Prewedding, dll" value="Umum">
+                <input type="text" name="category" placeholder="Portrait, Prewedding, dll" value="<?php echo e(old('category', $editData->category ?? 'Umum')); ?>">
             </div>
         </div>
         <div class="form-group">
-            <label>File Gambar</label>
-            <input type="file" name="image" accept=".jpg,.jpeg,.png,.webp" required>
+            <label>File Gambar <?php echo e($editData ? '(kosongkan jika tidak ingin mengganti)' : ''); ?></label>
+            <?php if($editData && $editData->image): ?>
+                <?php $currentImgPath = public_path('uploads/gallery/' . $editData->image); ?>
+                <?php if(file_exists($currentImgPath)): ?>
+                <div style="margin-bottom:10px;">
+                    <img src="<?php echo e(asset('uploads/gallery/' . $editData->image)); ?>" alt="<?php echo e($editData->title); ?>" style="width:100px;height:100px;object-fit:cover;border-radius:6px;">
+                </div>
+                <?php endif; ?>
+            <?php endif; ?>
+            <input type="file" name="image" accept=".jpg,.jpeg,.png,.webp" <?php echo e($editData ? '' : 'required'); ?>>
         </div>
-        <button type="submit" class="btn btn-primary">Unggah Foto</button>
+        <button type="submit" class="btn btn-primary"><?php echo e($editData ? 'Simpan Perubahan' : 'Unggah Foto'); ?></button>
     </form>
 </div>
 
@@ -55,6 +69,7 @@
                 <td><?php echo e($g->title); ?></td>
                 <td><?php echo e($g->category); ?></td>
                 <td class="action-icons">
+                    <a href="<?php echo e(route('admin.gallery.index', ['edit' => $g->id])); ?>">Edit</a>
                     <form method="POST" action="<?php echo e(route('admin.gallery.destroy', $g->id)); ?>" onsubmit="return confirm('Hapus foto ini dari galeri?');" style="display:inline;">
                         <?php echo csrf_field(); ?>
                         <button type="submit" class="danger" style="background:none;border:none;cursor:pointer;padding:0;">Hapus</button>
