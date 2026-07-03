@@ -22,7 +22,9 @@ Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/layanan', [PageController::class, 'layanan'])->name('layanan');
 Route::get('/layanan/{service}', [PageController::class, 'layananShow'])->name('layanan.show');
 Route::get('/galeri', [PageController::class, 'galeri'])->name('galeri');
+Route::get('/galeri/{gallery}', [PageController::class, 'galeriShow'])->name('galeri.show');
 Route::get('/tentang', [PageController::class, 'tentang'])->name('tentang');
+Route::get('/lokasi', [PageController::class, 'lokasi'])->name('lokasi');
 Route::get('/kontak', [PageController::class, 'kontak'])->name('kontak');
 
 /*

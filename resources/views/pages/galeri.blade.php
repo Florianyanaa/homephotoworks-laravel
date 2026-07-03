@@ -16,13 +16,13 @@
         <div class="gallery-grid">
             @foreach ($galleryItems as $g)
             @php $galImgPath = public_path('uploads/gallery/' . $g->image); @endphp
-            <div class="gallery-item">
+            <a href="{{ route('galeri.show', $g->id) }}" class="gallery-item gallery-item-link">
                 <img src="{{ file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg') }}" alt="{{ $g->title }}">
                 <div class="gallery-caption">
                     <span>{{ $g->category }}</span>
                     <h4>{{ $g->title }}</h4>
                 </div>
-            </div>
+            </a>
             @endforeach
         </div>
         @endif

@@ -50,9 +50,24 @@ class PageController extends Controller
         return view('pages.galeri', compact('galleryItems'));
     }
 
+    public function galeriShow(Gallery $gallery)
+    {
+        $others = Gallery::where('id', '!=', $gallery->id)
+            ->orderByDesc('id')
+            ->limit(4)
+            ->get();
+
+        return view('pages.galeri-detail', compact('gallery', 'others'));
+    }
+
     public function tentang()
     {
         return view('pages.tentang');
+    }
+
+    public function lokasi()
+    {
+        return view('pages.lokasi');
     }
 
     public function kontak()

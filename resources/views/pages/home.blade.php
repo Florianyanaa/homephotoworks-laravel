@@ -46,7 +46,7 @@
     </div>
 </section>
 
-<section class="section section-dark">
+<section class="section">
     <div class="container">
         <div class="section-head">
             <span class="eyebrow">Galeri Karya</span>
@@ -56,36 +56,17 @@
         <div class="gallery-grid">
             @foreach ($galleryItems as $g)
             @php $galImgPath = public_path('uploads/gallery/' . $g->image); @endphp
-            <div class="gallery-item">
+            <a href="{{ route('galeri.show', $g->id) }}" class="gallery-item gallery-item-link">
                 <img src="{{ file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg') }}" alt="{{ $g->title }}">
                 <div class="gallery-caption">
                     <span>{{ $g->category }}</span>
                     <h4>{{ $g->title }}</h4>
                 </div>
-            </div>
+            </a>
             @endforeach
         </div>
         <div style="text-align:center; margin-top: 44px;">
-            <a href="{{ route('galeri') }}" class="btn btn-light">Lihat Semua Galeri</a>
-        </div>
-    </div>
-</section>
-
-<section class="section">
-    <div class="container split">
-        <img src="{{ asset('img/placeholder-about.jpg') }}" alt="Studio Home Photoworks">
-        <div>
-            <span class="eyebrow">Kenapa Memilih Kami</span>
-            <h2>Studio dengan Standar Profesional &amp; Sentuhan Personal</h2>
-            <p>Kami percaya setiap foto adalah cerita. Tim fotografer kami menggabungkan teknik pencahayaan studio kelas atas dengan pendekatan personal untuk menghasilkan gambar yang tak hanya indah, tapi juga bermakna.</p>
-            <ul class="checklist">
-                <li>Peralatan &amp; pencahayaan studio profesional</li>
-                <li>Fotografer berpengalaman di berbagai konsep</li>
-                <li>Proses booking online yang mudah &amp; cepat</li>
-                <li>Hasil edit foto berkualitas tinggi</li>
-            </ul>
-            <br>
-            <a href="{{ route('tentang') }}" class="btn btn-primary">Selengkapnya Tentang Kami</a>
+            <a href="{{ route('galeri') }}" class="btn btn-outline">Lihat Semua Galeri</a>
         </div>
     </div>
 </section>

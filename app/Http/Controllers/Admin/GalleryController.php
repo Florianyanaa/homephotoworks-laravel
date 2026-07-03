@@ -29,6 +29,7 @@ class GalleryController extends Controller
             'id' => ['nullable', 'integer'],
             'title' => ['required', 'string', 'max:150'],
             'category' => ['nullable', 'string', 'max:100'],
+            'description' => ['nullable', 'string'],
             'image' => [$isEdit ? 'nullable' : 'required', 'file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ], [
             'title.required' => 'Judul wajib diisi.',
@@ -40,6 +41,7 @@ class GalleryController extends Controller
         $payload = [
             'title' => $data['title'],
             'category' => $data['category'] ?: 'Umum',
+            'description' => $data['description'] ?? null,
         ];
 
         if ($request->hasFile('image')) {
