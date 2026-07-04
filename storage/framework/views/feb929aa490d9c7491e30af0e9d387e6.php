@@ -50,6 +50,7 @@ unset($__defined_vars); ?>
             <a href="<?php echo e(route('admin.services.index')); ?>" class="<?php echo e($active === 'services' ? 'active' : ''); ?>">📷 Layanan</a>
             <a href="<?php echo e(route('admin.gallery.index')); ?>" class="<?php echo e($active === 'gallery' ? 'active' : ''); ?>">🖼️ Galeri</a>
             <a href="<?php echo e(route('admin.users.index')); ?>" class="<?php echo e($active === 'users' ? 'active' : ''); ?>">👥 Pengguna</a>
+            <a href="<?php echo e(route('admin.messages.index')); ?>" class="<?php echo e($active === 'messages' ? 'active' : ''); ?>">✉️ Pesan Masuk</a>
             <div class="divider"></div>
             <a href="<?php echo e(route('home')); ?>">🌐 Lihat Website</a>
         <?php else: ?>

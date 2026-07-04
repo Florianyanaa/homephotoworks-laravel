@@ -22,6 +22,7 @@
             <a href="{{ route('admin.services.index') }}" class="{{ $active === 'services' ? 'active' : '' }}">📷 Layanan</a>
             <a href="{{ route('admin.gallery.index') }}" class="{{ $active === 'gallery' ? 'active' : '' }}">🖼️ Galeri</a>
             <a href="{{ route('admin.users.index') }}" class="{{ $active === 'users' ? 'active' : '' }}">👥 Pengguna</a>
+            <a href="{{ route('admin.messages.index') }}" class="{{ $active === 'messages' ? 'active' : '' }}">✉️ Pesan Masuk</a>
             <div class="divider"></div>
             <a href="{{ route('home') }}">🌐 Lihat Website</a>
         @else

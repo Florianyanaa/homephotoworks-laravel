@@ -30,23 +30,48 @@
 
         <div class="panel" style="margin-bottom:0;">
             <h2 style="margin-bottom:20px;">Kirim Pesan</h2>
-            <form method="post" action="#" onsubmit="alert('Terima kasih! Pesan Anda telah dicatat (demo form).'); return false;">
+
+            @if ($errors->any())
+                @foreach ($errors->all() as $error)
+                    <div class="alert alert-error">{{ $error }}</div>
+                @endforeach
+            @endif
+
+            <form method="POST" action="{{ route('kontak.store') }}">
+                @csrf
                 <div class="form-group">
                     <label>Nama Lengkap</label>
-                    <input type="text" placeholder="Nama Anda" required>
+                    <input type="text" name="name" value="{{ old('name') }}" placeholder="Nama Anda" required>
                 </div>
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" placeholder="email@contoh.com" required>
+                    <input type="email" name="email" value="{{ old('email') }}" placeholder="email@contoh.com" required>
                 </div>
                 <div class="form-group">
                     <label>Pesan</label>
-                    <textarea rows="5" placeholder="Tuliskan pertanyaan atau kebutuhan Anda..." required></textarea>
+                    <textarea name="message" rows="5" placeholder="Tuliskan pertanyaan atau kebutuhan Anda..." required>{{ old('message') }}</textarea>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Kirim Pesan</button>
             </form>
         </div>
     </div>
 </section>
+
+@if (session('wa_link'))
+<script>
+    (function () {
+        var waWindow = window.open(@json(session('wa_link')), '_blank');
+        if (!waWindow) {
+            // Kalau popup diblokir browser, tampilkan tombol manual
+            var box = document.querySelector('.alert-success');
+            if (box) {
+                box.insertAdjacentHTML('afterend',
+                    '<div class="container"><a href="' + @json(session('wa_link')) + '" target="_blank" rel="noopener" class="btn btn-primary" style="margin:16px 0;">Lanjutkan ke WhatsApp &rarr;</a></div>'
+                );
+            }
+        }
+    })();
+</script>
+@endif
 
 </x-layout>

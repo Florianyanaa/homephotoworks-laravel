@@ -39,24 +39,49 @@
 
         <div class="panel" style="margin-bottom:0;">
             <h2 style="margin-bottom:20px;">Kirim Pesan</h2>
-            <form method="post" action="#" onsubmit="alert('Terima kasih! Pesan Anda telah dicatat (demo form).'); return false;">
+
+            <?php if($errors->any()): ?>
+                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <div class="alert alert-error"><?php echo e($error); ?></div>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php endif; ?>
+
+            <form method="POST" action="<?php echo e(route('kontak.store')); ?>">
+                <?php echo csrf_field(); ?>
                 <div class="form-group">
                     <label>Nama Lengkap</label>
-                    <input type="text" placeholder="Nama Anda" required>
+                    <input type="text" name="name" value="<?php echo e(old('name')); ?>" placeholder="Nama Anda" required>
                 </div>
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" placeholder="email@contoh.com" required>
+                    <input type="email" name="email" value="<?php echo e(old('email')); ?>" placeholder="email@contoh.com" required>
                 </div>
                 <div class="form-group">
                     <label>Pesan</label>
-                    <textarea rows="5" placeholder="Tuliskan pertanyaan atau kebutuhan Anda..." required></textarea>
+                    <textarea name="message" rows="5" placeholder="Tuliskan pertanyaan atau kebutuhan Anda..." required><?php echo e(old('message')); ?></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Kirim Pesan</button>
             </form>
         </div>
     </div>
 </section>
+
+<?php if(session('wa_link')): ?>
+<script>
+    (function () {
+        var waWindow = window.open(<?php echo json_encode(session('wa_link'), 15, 512) ?>, '_blank');
+        if (!waWindow) {
+            // Kalau popup diblokir browser, tampilkan tombol manual
+            var box = document.querySelector('.alert-success');
+            if (box) {
+                box.insertAdjacentHTML('afterend',
+                    '<div class="container"><a href="' + <?php echo json_encode(session('wa_link'), 15, 512) ?> + '" target="_blank" rel="noopener" class="btn btn-primary" style="margin:16px 0;">Lanjutkan ke WhatsApp &rarr;</a></div>'
+                );
+            }
+        }
+    })();
+</script>
+<?php endif; ?>
 
  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
