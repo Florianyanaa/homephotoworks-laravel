@@ -38,7 +38,12 @@
         <div class="gallery-grid">
             @foreach ($others as $g)
             @php $otherImgPath = $g->image ? public_path('uploads/gallery/' . $g->image) : null; @endphp
-            <a href="{{ route('galeri.show', $g->id) }}" class="gallery-item gallery-item-link">
+            <a href="{{ route('galeri.show', $g->id) }}"
+               class="gallery-item gallery-item-link js-lightbox-trigger"
+               data-full="{{ $otherImgPath && file_exists($otherImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg') }}"
+               data-title="{{ $g->title }}"
+               data-category="{{ $g->category }}"
+               data-detail="{{ route('galeri.show', $g->id) }}">
                 <img src="{{ $otherImgPath && file_exists($otherImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg') }}" alt="{{ $g->title }}">
                 <div class="gallery-caption">
                     <span>{{ $g->category }}</span>

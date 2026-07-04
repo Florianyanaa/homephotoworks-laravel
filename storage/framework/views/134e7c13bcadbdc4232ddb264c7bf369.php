@@ -65,7 +65,12 @@
         <div class="gallery-grid">
             <?php $__currentLoopData = $galleryItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $g): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <?php $galImgPath = public_path('uploads/gallery/' . $g->image); ?>
-            <a href="<?php echo e(route('galeri.show', $g->id)); ?>" class="gallery-item gallery-item-link">
+            <a href="<?php echo e(route('galeri.show', $g->id)); ?>"
+               class="gallery-item gallery-item-link js-lightbox-trigger"
+               data-full="<?php echo e(file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg')); ?>"
+               data-title="<?php echo e($g->title); ?>"
+               data-category="<?php echo e($g->category); ?>"
+               data-detail="<?php echo e(route('galeri.show', $g->id)); ?>">
                 <img src="<?php echo e(file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg')); ?>" alt="<?php echo e($g->title); ?>">
                 <div class="gallery-caption">
                     <span><?php echo e($g->category); ?></span>

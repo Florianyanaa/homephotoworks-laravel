@@ -50,6 +50,7 @@ Route::middleware('auth')->prefix('user')->name('user.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/booking', [BookingController::class, 'create'])->name('booking.create');
+    Route::get('/booking/check-availability', [BookingController::class, 'checkAvailability'])->name('booking.check-availability');
     Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
 
     Route::get('/my-bookings', [MyBookingController::class, 'index'])->name('my-bookings');

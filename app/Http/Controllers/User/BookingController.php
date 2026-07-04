@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
 use App\Models\Service;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
@@ -15,6 +17,32 @@ class BookingController extends Controller
         $selectedTier = (string) $request->query('tier', '');
 
         return view('user.booking', compact('services', 'selectedService', 'selectedTier'));
+    }
+
+    public function checkAvailability(Request $request)
+    {
+        $data = $request->validate([
+            'service_id' => ['required', 'integer', 'exists:services,id'],
+            'booking_date' => ['required', 'date'],
+            'booking_time' => ['required'],
+        ]);
+
+        $service = Service::find($data['service_id']);
+        $newStart = Carbon::parse($data['booking_date'].' '.$data['booking_time']);
+        $newEnd = $newStart->copy()->addMinutes((int) $service->duration_minutes);
+
+        $hasConflict = Booking::with('service')
+            ->where('booking_date', $data['booking_date'])
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->get()
+            ->contains(function ($existing) use ($newStart, $newEnd) {
+                $existingStart = Carbon::parse($existing->booking_date->format('Y-m-d').' '.$existing->booking_time);
+                $existingEnd = $existingStart->copy()->addMinutes((int) ($existing->service->duration_minutes ?? 60));
+
+                return $newStart < $existingEnd && $existingStart < $newEnd;
+            });
+
+        return response()->json(['available' => ! $hasConflict]);
     }
 
     public function store(Request $request)
@@ -36,6 +64,27 @@ class BookingController extends Controller
 
         $service = Service::findOrFail($data['service_id']);
         $tier = $service->tiers()[$data['tier']];
+
+        $newStart = Carbon::parse($data['booking_date'].' '.$data['booking_time']);
+        $newEnd = $newStart->copy()->addMinutes((int) $service->duration_minutes);
+
+        $hasConflict = Booking::with('service')
+            ->where('booking_date', $data['booking_date'])
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->get()
+            ->contains(function ($existing) use ($newStart, $newEnd) {
+                $existingStart = Carbon::parse($existing->booking_date->format('Y-m-d').' '.$existing->booking_time);
+                $existingEnd = $existingStart->copy()->addMinutes((int) ($existing->service->duration_minutes ?? 60));
+
+                // Bentrok kalau kedua rentang waktu saling tumpang tindih
+                return $newStart < $existingEnd && $existingStart < $newEnd;
+            });
+
+        if ($hasConflict) {
+            return back()
+                ->withInput()
+                ->withErrors(['booking_time' => 'Jadwal ini bentrok dengan booking lain yang sudah ada. Silakan pilih tanggal atau jam yang berbeda.']);
+        }
 
         $request->user()->bookings()->create([
             'service_id' => $data['service_id'],
