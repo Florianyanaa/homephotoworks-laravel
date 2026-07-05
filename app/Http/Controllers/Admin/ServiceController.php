@@ -64,11 +64,19 @@ class ServiceController extends Controller
             }
 
             $ext = $request->file('image')->getClientOriginalExtension();
-            $fileName = 'svc_'.time().'_'.random_int(1000, 9999).'.'.$ext;
-            $request->file('image')->move($uploadDir, $fileName);
-            \App\Services\ImageOptimizer::optimize($uploadDir.'/'.$fileName, 1200, 80);
+            $tempName = 'tmp_'.time().'_'.random_int(1000, 9999).'.'.$ext;
+            $request->file('image')->move($uploadDir, $tempName);
 
-            $payload['image'] = $fileName;
+            $webpName = 'svc_'.time().'_'.random_int(1000, 9999).'.webp';
+            $converted = \App\Services\ImageOptimizer::toWebp($uploadDir.'/'.$tempName, $uploadDir.'/'.$webpName, 1200, 85);
+
+            if ($converted) {
+                @unlink($uploadDir.'/'.$tempName);
+                $payload['image'] = $webpName;
+            } else {
+                // Fallback: server tidak support WebP, pakai file asli saja
+                $payload['image'] = $tempName;
+            }
         }
 
         if (! empty($data['id'])) {

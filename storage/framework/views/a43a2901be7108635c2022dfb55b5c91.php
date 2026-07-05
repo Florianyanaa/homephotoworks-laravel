@@ -31,7 +31,7 @@
                data-title="<?php echo e($g->title); ?>"
                data-category="<?php echo e($g->category); ?>"
                data-detail="<?php echo e(route('galeri.show', $g->id)); ?>">
-                <img src="<?php echo e(file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg')); ?>" alt="<?php echo e($g->title); ?>">
+                <img loading="lazy" src="<?php echo e(file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg')); ?>" alt="<?php echo e($g->title); ?>">
                 <div class="gallery-caption">
                     <span><?php echo e($g->category); ?></span>
                     <h4><?php echo e($g->title); ?></h4>

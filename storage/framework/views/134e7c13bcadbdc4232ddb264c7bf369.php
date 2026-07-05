@@ -38,7 +38,7 @@
             <?php $svcImgPath = $s->image ? public_path('uploads/services/' . $s->image) : null; ?>
             <div class="service-card">
                 <div class="service-thumb">
-                    <img src="<?php echo e($svcImgPath && file_exists($svcImgPath) ? asset('uploads/services/' . $s->image) : asset('img/placeholder-service.jpg')); ?>" alt="<?php echo e($s->name); ?>">
+                    <img loading="lazy" src="<?php echo e($svcImgPath && file_exists($svcImgPath) ? asset('uploads/services/' . $s->image) : asset('img/placeholder-service.jpg')); ?>" alt="<?php echo e($s->name); ?>">
                 </div>
                 <div class="service-body">
                     <h3><?php echo e($s->name); ?></h3>
@@ -71,7 +71,7 @@
                data-title="<?php echo e($g->title); ?>"
                data-category="<?php echo e($g->category); ?>"
                data-detail="<?php echo e(route('galeri.show', $g->id)); ?>">
-                <img src="<?php echo e(file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg')); ?>" alt="<?php echo e($g->title); ?>">
+                <img loading="lazy" src="<?php echo e(file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg')); ?>" alt="<?php echo e($g->title); ?>">
                 <div class="gallery-caption">
                     <span><?php echo e($g->category); ?></span>
                     <h4><?php echo e($g->title); ?></h4>

@@ -5,57 +5,101 @@ namespace App\Services;
 class ImageOptimizer
 {
     /**
-     * Kompres & resize gambar in-place di path yang sama.
-     * Foto dari HP biasanya 3-10MB — ini diturunkan ke ukuran wajar
-     * untuk web (max lebar tertentu + kualitas JPEG 80) tanpa
-     * kelihatan bedanya di layar, tapi jauh lebih ringan didownload.
+     * Baca gambar dari format apapun (jpg/png/gif/webp), koreksi orientasi
+     * EXIF (biar foto dari HP tidak kebalik/miring), resize kalau perlu,
+     * lalu simpan sebagai WebP di $destPath.
      */
-    public static function optimize(string $path, int $maxWidth = 1600, int $quality = 80): void
+    public static function toWebp(string $sourcePath, string $destPath, int $maxWidth = 1600, int $quality = 85): bool
     {
-        if (! extension_loaded('gd') || ! file_exists($path)) {
-            return; // aman: kalau GD tidak ada, biarkan file asli tanpa dioptimasi
+        if (! extension_loaded('gd') || ! function_exists('imagewebp') || ! file_exists($sourcePath)) {
+            return false;
         }
 
-        $info = @getimagesize($path);
+        $info = @getimagesize($sourcePath);
         if (! $info) {
-            return;
+            return false;
         }
 
-        [$width, $height, $type] = $info;
-
-        // Kalau gambar sudah cukup kecil, tidak perlu diresize, cukup dikompres
-        $ratio = $width > $maxWidth ? $maxWidth / $width : 1;
-        $newWidth = (int) round($width * $ratio);
-        $newHeight = (int) round($height * $ratio);
+        [, , $type] = $info;
 
         $source = match ($type) {
-            IMAGETYPE_JPEG => @imagecreatefromjpeg($path),
-            IMAGETYPE_PNG => @imagecreatefrompng($path),
-            IMAGETYPE_WEBP => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($path) : null,
+            IMAGETYPE_JPEG => @imagecreatefromjpeg($sourcePath),
+            IMAGETYPE_PNG => @imagecreatefrompng($sourcePath),
+            IMAGETYPE_GIF => @imagecreatefromgif($sourcePath),
+            IMAGETYPE_WEBP => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($sourcePath) : null,
             default => null,
         };
 
         if (! $source) {
-            return;
+            return false;
         }
+
+        // Koreksi orientasi EXIF — kamera HP menyimpan foto potret sebagai data
+        // "landscape" + info rotasi terpisah. GD tidak otomatis membaca info ini,
+        // jadi kalau tidak dikoreksi manual, hasilnya kebalik/miring 90°/180°.
+        if ($type === IMAGETYPE_JPEG && function_exists('exif_read_data')) {
+            $exif = @exif_read_data($sourcePath);
+            if ($exif && isset($exif['Orientation'])) {
+                $source = self::applyExifOrientation($source, (int) $exif['Orientation']);
+            }
+        }
+
+        $width = imagesx($source);
+        $height = imagesy($source);
+
+        $ratio = $width > $maxWidth ? $maxWidth / $width : 1;
+        $newWidth = max(1, (int) round($width * $ratio));
+        $newHeight = max(1, (int) round($height * $ratio));
 
         $resized = imagecreatetruecolor($newWidth, $newHeight);
 
-        // Pertahankan transparansi untuk PNG
-        if ($type === IMAGETYPE_PNG) {
-            imagealphablending($resized, false);
-            imagesavealpha($resized, true);
-        }
+        // Jaga transparansi (kalau sumbernya PNG/GIF transparan)
+        imagealphablending($resized, false);
+        imagesavealpha($resized, true);
+        $transparent = imagecolorallocatealpha($resized, 0, 0, 0, 127);
+        imagefilledrectangle($resized, 0, 0, $newWidth, $newHeight, $transparent);
 
         imagecopyresampled($resized, $source, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
 
-        match ($type) {
-            IMAGETYPE_PNG => imagepng($resized, $path, 8),
-            IMAGETYPE_WEBP => function_exists('imagewebp') ? imagewebp($resized, $path, $quality) : imagejpeg($resized, $path, $quality),
-            default => imagejpeg($resized, $path, $quality),
-        };
+        $ok = imagewebp($resized, $destPath, $quality);
 
         imagedestroy($source);
         imagedestroy($resized);
+
+        return $ok;
+    }
+
+    /**
+     * Terapkan rotasi/flip sesuai kode orientasi EXIF standar (1-8).
+     */
+    protected static function applyExifOrientation($image, int $orientation)
+    {
+        switch ($orientation) {
+            case 2:
+                imageflip($image, IMG_FLIP_HORIZONTAL);
+                break;
+            case 3:
+                $image = imagerotate($image, 180, 0);
+                break;
+            case 4:
+                imageflip($image, IMG_FLIP_VERTICAL);
+                break;
+            case 5:
+                $image = imagerotate($image, -90, 0);
+                imageflip($image, IMG_FLIP_HORIZONTAL);
+                break;
+            case 6:
+                $image = imagerotate($image, -90, 0);
+                break;
+            case 7:
+                $image = imagerotate($image, 90, 0);
+                imageflip($image, IMG_FLIP_HORIZONTAL);
+                break;
+            case 8:
+                $image = imagerotate($image, 90, 0);
+                break;
+        }
+
+        return $image;
     }
 }

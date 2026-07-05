@@ -35,6 +35,7 @@ unset($__defined_vars); ?>
 <title><?php echo e($title ? $title . ' — Home Photoworks' : 'Home Photoworks — Studio Foto Profesional'); ?></title>
 <meta name="description" content="Home Photoworks — Studio foto profesional dengan konsep modern dan elegan. Portrait, prewedding, keluarga, produk, hingga maternity.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="<?php echo e(asset('css/style.css')); ?>">
 </head>
