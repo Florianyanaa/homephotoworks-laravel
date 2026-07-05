@@ -4,7 +4,22 @@ document.addEventListener('DOMContentLoaded', function () {
     if (toggle && nav) {
         toggle.addEventListener('click', function () {
             nav.classList.toggle('open');
+            toggle.classList.toggle('open');
         });
+    }
+
+    // Header transparan di atas, jadi solid putih begitu discroll
+    var siteHeader = document.querySelector('.site-header');
+    if (siteHeader) {
+        var toggleHeaderScrolled = function () {
+            if (window.scrollY > 40) {
+                siteHeader.classList.add('scrolled');
+            } else {
+                siteHeader.classList.remove('scrolled');
+            }
+        };
+        toggleHeaderScrolled();
+        window.addEventListener('scroll', toggleHeaderScrolled, { passive: true });
     }
 
     // Auto hide alert after 4s
@@ -69,6 +84,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         function closeLightbox() {
+            // Lepaskan fokus dulu dari tombol di dalam lightbox sebelum disembunyikan,
+            // supaya tidak ada elemen berfokus di balik aria-hidden="true" (accessibility warning)
+            if (document.activeElement && lightbox.contains(document.activeElement)) {
+                document.activeElement.blur();
+            }
             lightbox.classList.remove('open');
             lightbox.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
