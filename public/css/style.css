@@ -107,20 +107,20 @@ h1, h2, h3, h4 {
 .btn-danger:hover { background: #b00020; color: var(--white); }
 
 /* ---------- Header / Nav ---------- */
+/* Default: header dipakai di atas background PUTIH (Layanan, Galeri, Tentang,
+   Lokasi, Kontak, dll), jadi teksnya gelap secara default. Untuk halaman
+   Beranda yang heronya masih foto gelap, lihat override ".has-dark-hero"
+   di bagian bawah blok ini. */
 .site-header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 100;
-    background: transparent;
-    border-bottom: 1px solid transparent;
-    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-}
-.site-header.scrolled {
     background: rgba(255,255,255,0.97);
     border-bottom: 1px solid #ececec;
     box-shadow: 0 2px 14px rgba(0,0,0,0.05);
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 .header-inner {
     display: flex;
@@ -133,12 +133,10 @@ h1, h2, h3, h4 {
     font-size: 24px;
     font-weight: 700;
     letter-spacing: 2px;
-    color: var(--white);
+    color: var(--near-black);
     transition: color 0.3s ease;
 }
-.logo span { font-weight: 400; color: rgba(255,255,255,0.7); transition: color 0.3s ease; }
-.site-header.scrolled .logo { color: var(--near-black); }
-.site-header.scrolled .logo span { color: var(--gray); }
+.logo span { font-weight: 400; color: var(--gray); transition: color 0.3s ease; }
 
 .main-nav {
     display: flex;
@@ -150,12 +148,11 @@ h1, h2, h3, h4 {
     letter-spacing: 1px;
     text-transform: uppercase;
     font-weight: 500;
-    color: var(--white);
+    color: var(--near-black);
     position: relative;
     padding: 4px 0;
     transition: color 0.3s ease;
 }
-.site-header.scrolled .main-nav a { color: var(--near-black); }
 .main-nav a:not(.nav-cta):not(.nav-login):not(.nav-logout)::after {
     content: '';
     position: absolute;
@@ -167,20 +164,37 @@ h1, h2, h3, h4 {
 .main-nav a:not(.nav-cta):not(.nav-login):not(.nav-logout):hover::after { width: 100%; }
 .nav-cta {
     background: transparent;
-    color: var(--white) !important;
+    color: var(--near-black) !important;
     padding: 10px 22px;
     border-radius: var(--radius);
-    border: 1px solid rgba(255,255,255,0.5);
+    border: 1px solid #d9d9d9;
 }
-.nav-cta:hover { background: rgba(255,255,255,0.15); }
-.site-header.scrolled .nav-cta { color: var(--near-black) !important; border-color: #d9d9d9; }
-.site-header.scrolled .nav-cta:hover { background: var(--gray-light); }
-.nav-logout { color: rgba(255,255,255,0.7) !important; }
-.site-header.scrolled .nav-logout { color: var(--gray) !important; }
+.nav-cta:hover { background: var(--gray-light); }
+.nav-logout { color: var(--gray) !important; }
 
 .nav-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; }
-.nav-toggle span { width: 24px; height: 2px; background: var(--white); transition: background 0.3s ease; }
-.site-header.scrolled .nav-toggle span { background: var(--black); }
+.nav-toggle span { width: 24px; height: 2px; background: var(--black); transition: background 0.3s ease; }
+
+/* ---------- Header di atas hero gelap (Beranda) ----------
+   Sebelum discroll (belum ada class .scrolled), header transparan
+   dan teksnya putih supaya kebaca di atas foto hero yang gelap. */
+body.has-dark-hero .site-header:not(.scrolled) {
+    background: transparent;
+    border-bottom-color: transparent;
+    box-shadow: none;
+}
+body.has-dark-hero .site-header:not(.scrolled) .logo { color: var(--white); }
+body.has-dark-hero .site-header:not(.scrolled) .logo span { color: rgba(255,255,255,0.7); }
+body.has-dark-hero .site-header:not(.scrolled) .main-nav a { color: var(--white); }
+body.has-dark-hero .site-header:not(.scrolled) .nav-cta {
+    color: var(--white) !important;
+    border-color: rgba(255,255,255,0.5);
+}
+body.has-dark-hero .site-header:not(.scrolled) .nav-cta:hover { background: rgba(255,255,255,0.15); }
+body.has-dark-hero .site-header:not(.scrolled) .nav-logout { color: rgba(255,255,255,0.7) !important; }
+body.has-dark-hero .site-header:not(.scrolled) .nav-toggle span { background: var(--white); }
+
+
 
 /* ---------- Hero ---------- */
 .hero {
@@ -454,13 +468,14 @@ tbody tr:hover { background: #fafafa; }
 
 /* ---------- Misc pages ---------- */
 .page-hero {
-    background: var(--black);
-    color: var(--white);
+    background: var(--white);
+    color: var(--near-black);
     padding: 110px 0 60px;
     text-align: center;
+    border-bottom: 1px solid #ececec;
 }
 .page-hero h1 { font-size: 52px; }
-.page-hero p { color: var(--gray-light); margin-top: 12px; }
+.page-hero p { color: var(--gray-dark); margin-top: 12px; }
 
 .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
 .contact-info-item { margin-bottom: 26px; }
