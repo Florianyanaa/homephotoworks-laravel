@@ -22,7 +22,7 @@
                data-title="{{ $g->title }}"
                data-category="{{ $g->category }}"
                data-detail="{{ route('galeri.show', $g->id) }}">
-                <img src="{{ file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg') }}" alt="{{ $g->title }}">
+                <img loading="lazy" src="{{ file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg') }}" alt="{{ $g->title }}">
                 <div class="gallery-caption">
                     <span>{{ $g->category }}</span>
                     <h4>{{ $g->title }}</h4>

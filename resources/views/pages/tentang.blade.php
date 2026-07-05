@@ -10,7 +10,7 @@
 
 <section class="section">
     <div class="container split">
-        <img src="{{ asset('img/placeholder-about.jpg') }}" alt="Tim Home Photoworks">
+        <img loading="lazy" src="{{ asset('img/placeholder-about.jpg') }}" alt="Tim Home Photoworks">
         <div>
             <span class="eyebrow">Perjalanan Kami</span>
             <h2>Dari Studio Kecil Menjadi Rumah Kreativitas</h2>

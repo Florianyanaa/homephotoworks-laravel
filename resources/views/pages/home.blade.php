@@ -29,7 +29,7 @@
             @php $svcImgPath = $s->image ? public_path('uploads/services/' . $s->image) : null; @endphp
             <div class="service-card">
                 <div class="service-thumb">
-                    <img src="{{ $svcImgPath && file_exists($svcImgPath) ? asset('uploads/services/' . $s->image) : asset('img/placeholder-service.jpg') }}" alt="{{ $s->name }}">
+                    <img loading="lazy" src="{{ $svcImgPath && file_exists($svcImgPath) ? asset('uploads/services/' . $s->image) : asset('img/placeholder-service.jpg') }}" alt="{{ $s->name }}">
                 </div>
                 <div class="service-body">
                     <h3>{{ $s->name }}</h3>
@@ -62,7 +62,7 @@
                data-title="{{ $g->title }}"
                data-category="{{ $g->category }}"
                data-detail="{{ route('galeri.show', $g->id) }}">
-                <img src="{{ file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg') }}" alt="{{ $g->title }}">
+                <img loading="lazy" src="{{ file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg') }}" alt="{{ $g->title }}">
                 <div class="gallery-caption">
                     <span>{{ $g->category }}</span>
                     <h4>{{ $g->title }}</h4>

@@ -64,6 +64,7 @@ class GalleryController extends Controller
             $ext = $request->file('image')->getClientOriginalExtension();
             $fileName = 'gal_'.time().'_'.random_int(1000, 9999).'.'.$ext;
             $request->file('image')->move($uploadDir, $fileName);
+            \App\Services\ImageOptimizer::optimize($uploadDir.'/'.$fileName, 1600, 80);
 
             $payload['image'] = $fileName;
         }

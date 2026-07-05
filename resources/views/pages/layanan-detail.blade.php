@@ -12,7 +12,7 @@
 
 <section class="section">
     <div class="container">
-        <img src="{{ $svcImgPath && file_exists($svcImgPath) ? asset('uploads/services/' . $service->image) : asset('img/placeholder-service.jpg') }}"
+        <img loading="lazy" src="{{ $svcImgPath && file_exists($svcImgPath) ? asset('uploads/services/' . $service->image) : asset('img/placeholder-service.jpg') }}"
              alt="{{ $service->name }}"
              style="width:100%; max-height:420px; object-fit:cover; border-radius: var(--radius); margin-bottom:48px;">
 

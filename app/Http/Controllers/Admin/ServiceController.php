@@ -66,6 +66,7 @@ class ServiceController extends Controller
             $ext = $request->file('image')->getClientOriginalExtension();
             $fileName = 'svc_'.time().'_'.random_int(1000, 9999).'.'.$ext;
             $request->file('image')->move($uploadDir, $fileName);
+            \App\Services\ImageOptimizer::optimize($uploadDir.'/'.$fileName, 1200, 80);
 
             $payload['image'] = $fileName;
         }
