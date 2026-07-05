@@ -625,3 +625,34 @@ tbody tr:hover { background: #fafafa; }
     .lightbox-close { top: 14px; right: 16px; font-size: 30px; }
     .lightbox-content img { max-height: 60vh; }
 }
+
+/* =========================================================
+   SCROLL REVEAL — animasi masuk yang mulus saat elemen
+   terlihat di layar (dipicu otomatis lewat main.js)
+   ========================================================= */
+.reveal {
+    opacity: 0;
+    transform: translateY(36px);
+    will-change: opacity, transform;
+}
+/* Pakai @keyframes (bukan `transition`) supaya tidak menimpa
+   transition hover yang sudah ada di elemen seperti .service-card
+   dan .gallery-item */
+.reveal.is-visible {
+    animation: revealIn 0.9s cubic-bezier(.16,.84,.44,1) forwards;
+}
+@keyframes revealIn {
+    from { opacity: 0; transform: translateY(36px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+/* Hormati preferensi pengguna yang minta animasi minim */
+@media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; }
+    .reveal.is-visible { animation: none; }
+}
+
+/* Bikin scroll bar terasa lebih halus di browser berbasis WebKit */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--off-white); }
+::-webkit-scrollbar-thumb { background: var(--gray-light); border-radius: 20px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gray); }

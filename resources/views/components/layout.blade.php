@@ -107,6 +107,15 @@
     </svg>
 </a>
 
+<script>
+    // Konfigurasi SmoothScroll.js — dibaca otomatis oleh library saat dimuat.
+    // animationTime lebih besar = durasi "meluncur" tiap kali scroll lebih lama/berasa.
+    window.SmoothScrollOptions = {
+        animationTime: 700,
+        stepSize: 110
+    };
+</script>
+<script src="{{ asset('js/SmoothScroll.js') }}"></script>
 <script src="{{ asset('js/main.js') }}"></script>
 </body>
 </html>

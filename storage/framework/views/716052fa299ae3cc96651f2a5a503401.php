@@ -136,6 +136,7 @@ unset($__defined_vars); ?>
     </svg>
 </a>
 
+<script src="<?php echo e(asset('js/SmoothScroll.js')); ?>"></script>
 <script src="<?php echo e(asset('js/main.js')); ?>"></script>
 </body>
 </html>

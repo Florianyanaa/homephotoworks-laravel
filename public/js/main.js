@@ -22,6 +22,58 @@ document.addEventListener('DOMContentLoaded', function () {
         window.addEventListener('scroll', toggleHeaderScrolled, { passive: true });
     }
 
+    // Catatan: gerakan smooth-scroll (inertia saat mouse wheel) sekarang
+    // ditangani oleh library "SmoothScroll.js" (js/SmoothScroll.js) yang
+    // sama persis dipakai template Kaira — lebih teruji daripada bikinan
+    // sendiri. Lihat tag <script> di layout.blade.php.
+
+    // Scroll reveal — elemen muncul dengan animasi fade + geser halus
+    // begitu masuk ke area layar, biar scroll terasa mulus (bukan "patah-patah")
+    (function initScrollReveal() {
+        var selector = [
+            '.section-head', '.service-card', '.gallery-item', '.cta-band',
+            '.hero-content', '.grid-3 > *', '.grid-4 > *', '.grid-2 > *',
+            '.location-card', '.contact-info-item', '.panel', '.page-hero',
+            '.checklist li', '.footer-grid > *', '.empty-state'
+        ].join(', ');
+
+        var targets = Array.prototype.slice.call(document.querySelectorAll(selector));
+        if (!targets.length) return;
+
+        // Kelompokkan berdasarkan parent supaya delay bertahap (stagger)
+        // terasa natural per baris/grup, bukan acak di seluruh halaman
+        var groups = new Map();
+        targets.forEach(function (el) {
+            var parent = el.parentElement;
+            if (!groups.has(parent)) groups.set(parent, []);
+            groups.get(parent).push(el);
+        });
+
+        groups.forEach(function (siblings) {
+            siblings.forEach(function (el, i) {
+                el.classList.add('reveal');
+                el.style.animationDelay = (Math.min(i, 5) * 0.08) + 's';
+            });
+        });
+
+        if (!('IntersectionObserver' in window)) {
+            // Fallback: langsung tampilkan tanpa animasi kalau browser tidak mendukung
+            targets.forEach(function (el) { el.classList.add('is-visible'); });
+            return;
+        }
+
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+        targets.forEach(function (el) { observer.observe(el); });
+    })();
+
     // Auto hide alert after 4s
     var alerts = document.querySelectorAll('.alert');
     alerts.forEach(function (a) {
