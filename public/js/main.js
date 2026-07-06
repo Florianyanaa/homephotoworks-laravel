@@ -11,28 +11,35 @@
     var current = window.scrollY;
     var raf = null;
     var ease = 0.1; // 0.05 = lebih "berat"/melambat, 0.2 = lebih responsif
+    var isProgrammatic = false; // true selagi step() yang menggerakkan scroll
 
     function maxScroll() {
-        return document.documentElement.scrollHeight - window.innerHeight;
+        return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
     }
 
     function step() {
         var diff = target - current;
         if (Math.abs(diff) < 0.5) {
             current = target;
+            isProgrammatic = true;
             window.scrollTo(0, current);
             raf = null;
             return;
         }
         current += diff * ease;
+        isProgrammatic = true;
         window.scrollTo(0, current);
         raf = requestAnimationFrame(step);
     }
 
     window.addEventListener('wheel', function (e) {
-        // Biarkan area yang punya scroll sendiri (dropdown, textarea, sidebar dashboard,
-        // lightbox, dll) tetap pakai scroll native, jangan diganggu
-        if (e.target.closest('select, textarea, .dash-sidebar, .lightbox, [data-native-scroll]')) {
+        // Kalau kursor di atas elemen yang benar-benar punya isi lebih panjang
+        // dari kotaknya (butuh scroll sendiri), biarkan native — supaya isinya
+        // tetap bisa di-scroll. Kalau tidak (misal textarea kosong/pendek),
+        // ikut scroll halaman biasa (custom smooth), biar tidak ada transisi
+        // kasar-halus-kasar yang bikin "glitch" saat kursor keluar-masuk elemen itu.
+        var scrollableParent = e.target.closest('select, textarea, .dash-sidebar, .lightbox, [data-native-scroll]');
+        if (scrollableParent && scrollableParent.scrollHeight > scrollableParent.clientHeight) {
             return;
         }
 
@@ -44,6 +51,23 @@
             raf = requestAnimationFrame(step);
         }
     }, { passive: false });
+
+    // Kalau scroll terjadi dari sumber LAIN (keyboard, drag scrollbar, klik anchor #link,
+    // atau browser mengembalikan posisi scroll saat navigasi back/forward), samakan lagi
+    // target & current ke posisi asli itu — ini yang memperbaiki bug "glitch"/lompat
+    // sebelumnya, karena dulu variabel internal bisa "ketinggalan" dari posisi asli.
+    window.addEventListener('scroll', function () {
+        if (isProgrammatic) {
+            isProgrammatic = false;
+            return;
+        }
+        target = window.scrollY;
+        current = window.scrollY;
+        if (raf) {
+            cancelAnimationFrame(raf);
+            raf = null;
+        }
+    }, { passive: true });
 
     // Kalau ada perubahan ukuran konten (gambar lazy-load selesai, dll),
     // pastikan batas scroll tetap akurat
