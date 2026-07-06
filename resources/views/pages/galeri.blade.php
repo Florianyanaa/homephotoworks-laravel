@@ -1,7 +1,7 @@
 <x-layout title="Galeri">
 
 <section class="page-hero">
-    <div class="container">
+    <div class="container page-hero-content">
         <span class="eyebrow">Portofolio</span>
         <h1>Galeri Karya Kami</h1>
         <p>Kumpulan momen yang telah kami abadikan bersama para klien.</p>
@@ -17,7 +17,7 @@
             @foreach ($galleryItems as $g)
             @php $galImgPath = public_path('uploads/gallery/' . $g->image); @endphp
             <a href="{{ route('galeri.show', $g->id) }}"
-               class="gallery-item gallery-item-link js-lightbox-trigger"
+               class="gallery-item gallery-item-link js-lightbox-trigger reveal-on-scroll"
                data-full="{{ file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg') }}"
                data-title="{{ $g->title }}"
                data-category="{{ $g->category }}"

@@ -1,3 +1,111 @@
+// Smooth scroll pakai mouse wheel — scroll jadi punya efek "easing"
+// (halus/melambat di ujung), mirip yang dipakai web Kaira.
+// Implementasi ini dibuat sendiri dari nol (bukan copy library manapun).
+(function () {
+    // Device layar sentuh (HP/tablet) sudah punya momentum-scroll bawaan
+    // yang lebih baik dari ini, jadi efek custom ini cuma dipasang untuk mouse.
+    var isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (isTouchDevice) return;
+
+    var target = window.scrollY;
+    var current = window.scrollY;
+    var raf = null;
+    var ease = 0.1; // 0.05 = lebih "berat"/melambat, 0.2 = lebih responsif
+
+    function maxScroll() {
+        return document.documentElement.scrollHeight - window.innerHeight;
+    }
+
+    function step() {
+        var diff = target - current;
+        if (Math.abs(diff) < 0.5) {
+            current = target;
+            window.scrollTo(0, current);
+            raf = null;
+            return;
+        }
+        current += diff * ease;
+        window.scrollTo(0, current);
+        raf = requestAnimationFrame(step);
+    }
+
+    window.addEventListener('wheel', function (e) {
+        // Biarkan area yang punya scroll sendiri (dropdown, textarea, sidebar dashboard,
+        // lightbox, dll) tetap pakai scroll native, jangan diganggu
+        if (e.target.closest('select, textarea, .dash-sidebar, .lightbox, [data-native-scroll]')) {
+            return;
+        }
+
+        e.preventDefault();
+        target += e.deltaY;
+        target = Math.max(0, Math.min(target, maxScroll()));
+
+        if (!raf) {
+            raf = requestAnimationFrame(step);
+        }
+    }, { passive: false });
+
+    // Kalau ada perubahan ukuran konten (gambar lazy-load selesai, dll),
+    // pastikan batas scroll tetap akurat
+    window.addEventListener('resize', function () {
+        target = Math.min(target, maxScroll());
+    });
+})();
+
+// Transisi pindah halaman — halaman lama fade-out dulu sebelum benar-benar
+// pindah, jadi berasa smooth mirip animasi di web Kaira, walaupun ini
+// website multi-halaman biasa (bukan SPA).
+document.addEventListener('click', function (e) {
+    if (e.defaultPrevented) return; // sudah ditangani handler lain (lightbox, tombol keluar, dll)
+
+    var link = e.target.closest('a');
+    if (!link) return;
+
+    var href = link.getAttribute('href');
+    if (!href || href.charAt(0) === '#') return;
+    if (link.target === '_blank' || link.hasAttribute('download')) return;
+    if (href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return;
+    if (link.classList.contains('js-lightbox-trigger')) return; // biar tidak bentrok sama lightbox galeri
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // biar Ctrl+Klik tetap buka tab baru normal
+
+    var url;
+    try {
+        url = new URL(href, window.location.href);
+    } catch (err) {
+        return;
+    }
+    if (url.origin !== window.location.origin) return; // link ke situs lain: biarkan normal
+
+    e.preventDefault();
+    document.body.classList.add('page-exit');
+    setTimeout(function () {
+        window.location.href = url.href;
+    }, 320);
+});
+
+// Preloader — hilang halus begitu halaman selesai dimuat,
+// lalu foto hero "muncul" dengan animasi fade + slide-up.
+window.addEventListener('load', function () {
+    var preloader = document.getElementById('pagePreloader');
+    var heroContent = document.querySelector('.hero-content');
+    var pageHeroContent = document.querySelector('.page-hero-content');
+
+    setTimeout(function () {
+        if (preloader) {
+            preloader.classList.add('loaded');
+        }
+        if (heroContent) {
+            heroContent.classList.add('revealed');
+        }
+        if (pageHeroContent) {
+            pageHeroContent.classList.add('revealed');
+        }
+        if (preloader) {
+            setTimeout(function () { preloader.remove(); }, 800);
+        }
+    }, 300);
+});
+
 document.addEventListener('DOMContentLoaded', function () {
     var toggle = document.getElementById('navToggle');
     var nav = document.getElementById('mainNav');
@@ -9,70 +117,49 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Header transparan di atas, jadi solid putih begitu discroll
+    // (di-throttle pakai requestAnimationFrame biar tidak bikin scroll patah-patah)
     var siteHeader = document.querySelector('.site-header');
     if (siteHeader) {
-        var toggleHeaderScrolled = function () {
-            if (window.scrollY > 40) {
-                siteHeader.classList.add('scrolled');
-            } else {
-                siteHeader.classList.remove('scrolled');
+        var isScrolled = false;
+        var ticking = false;
+
+        var applyHeaderState = function () {
+            var shouldBeScrolled = window.scrollY > 40;
+            if (shouldBeScrolled !== isScrolled) {
+                isScrolled = shouldBeScrolled;
+                siteHeader.classList.toggle('scrolled', isScrolled);
+            }
+            ticking = false;
+        };
+
+        var onScroll = function () {
+            if (!ticking) {
+                requestAnimationFrame(applyHeaderState);
+                ticking = true;
             }
         };
-        toggleHeaderScrolled();
-        window.addEventListener('scroll', toggleHeaderScrolled, { passive: true });
+
+        applyHeaderState();
+        window.addEventListener('scroll', onScroll, { passive: true });
     }
 
-    // Catatan: gerakan smooth-scroll (inertia saat mouse wheel) sekarang
-    // ditangani oleh library "SmoothScroll.js" (js/SmoothScroll.js) yang
-    // sama persis dipakai template Kaira — lebih teruji daripada bikinan
-    // sendiri. Lihat tag <script> di layout.blade.php.
-
-    // Scroll reveal — elemen muncul dengan animasi fade + geser halus
-    // begitu masuk ke area layar, biar scroll terasa mulus (bukan "patah-patah")
-    (function initScrollReveal() {
-        var selector = [
-            '.section-head', '.service-card', '.gallery-item', '.cta-band',
-            '.hero-content', '.grid-3 > *', '.grid-4 > *', '.grid-2 > *',
-            '.location-card', '.contact-info-item', '.panel', '.page-hero',
-            '.checklist li', '.footer-grid > *', '.empty-state'
-        ].join(', ');
-
-        var targets = Array.prototype.slice.call(document.querySelectorAll(selector));
-        if (!targets.length) return;
-
-        // Kelompokkan berdasarkan parent supaya delay bertahap (stagger)
-        // terasa natural per baris/grup, bukan acak di seluruh halaman
-        var groups = new Map();
-        targets.forEach(function (el) {
-            var parent = el.parentElement;
-            if (!groups.has(parent)) groups.set(parent, []);
-            groups.get(parent).push(el);
-        });
-
-        groups.forEach(function (siblings) {
-            siblings.forEach(function (el, i) {
-                el.classList.add('reveal');
-                el.style.animationDelay = (Math.min(i, 5) * 0.08) + 's';
-            });
-        });
-
-        if (!('IntersectionObserver' in window)) {
-            // Fallback: langsung tampilkan tanpa animasi kalau browser tidak mendukung
-            targets.forEach(function (el) { el.classList.add('is-visible'); });
-            return;
-        }
-
-        var observer = new IntersectionObserver(function (entries) {
+    // Reveal foto/kartu saat discroll (pakai IntersectionObserver — ringan, tidak bikin lag)
+    var revealEls = document.querySelectorAll('.reveal-on-scroll');
+    if (revealEls.length && 'IntersectionObserver' in window) {
+        var revealObserver = new IntersectionObserver(function (entries, obs) {
             entries.forEach(function (entry) {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible');
-                    observer.unobserve(entry.target);
+                    obs.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
-        targets.forEach(function (el) { observer.observe(el); });
-    })();
+        revealEls.forEach(function (el) { revealObserver.observe(el); });
+    } else {
+        // Browser tidak support IntersectionObserver: langsung tampilkan semua saja
+        revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+    }
 
     // Auto hide alert after 4s
     var alerts = document.querySelectorAll('.alert');

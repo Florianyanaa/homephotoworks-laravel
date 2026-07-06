@@ -22,7 +22,7 @@ $branches = [
 @endphp
 
 <section class="page-hero">
-    <div class="container">
+    <div class="container page-hero-content">
         <span class="eyebrow">Cabang Kami</span>
         <h1>Lokasi Kami</h1>
         <p>Home Photoworks hadir di 4 kota — pilih cabang terdekat dari lokasi Anda.</p>

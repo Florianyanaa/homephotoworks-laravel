@@ -11,7 +11,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
-<body class="{{ request()->routeIs('home') ? 'has-dark-hero' : '' }}">
+<body class="{{ request()->routeIs('home') ? 'is-home' : '' }}">
+
+<div class="page-preloader" id="pagePreloader">
+    <div class="page-preloader-logo">HOME <span>PHOTOWORKS</span></div>
+</div>
 
 <header class="site-header">
     <div class="container header-inner">
@@ -107,15 +111,6 @@
     </svg>
 </a>
 
-<script>
-    // Konfigurasi SmoothScroll.js — dibaca otomatis oleh library saat dimuat.
-    // animationTime lebih besar = durasi "meluncur" tiap kali scroll lebih lama/berasa.
-    window.SmoothScrollOptions = {
-        animationTime: 700,
-        stepSize: 110
-    };
-</script>
-<script src="{{ asset('js/SmoothScroll.js') }}"></script>
 <script src="{{ asset('js/main.js') }}"></script>
 </body>
 </html>

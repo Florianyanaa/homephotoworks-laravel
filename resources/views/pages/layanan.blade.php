@@ -1,7 +1,7 @@
 <x-layout title="Layanan">
 
 <section class="page-hero">
-    <div class="container">
+    <div class="container page-hero-content">
         <span class="eyebrow">Paket &amp; Layanan</span>
         <h1>Pilih Paket Sesuai Kebutuhan Anda</h1>
         <p>Semua paket sudah termasuk sesi foto studio, pengarahan gaya, dan hasil edit profesional. Klik salah satu paket untuk melihat pilihan Seikhlasnya, Small, Medium, dan Large.</p>
@@ -13,9 +13,9 @@
         <div class="grid-3">
             @foreach ($services as $s)
             @php $svcImgPath = $s->image ? public_path('uploads/services/' . $s->image) : null; @endphp
-            <a href="{{ route('layanan.show', $s->id) }}" class="service-card service-card-link">
+            <a href="{{ route('layanan.show', $s->id) }}" class="service-card service-card-link reveal-on-scroll">
                 <div class="service-thumb">
-                    <img src="{{ $svcImgPath && file_exists($svcImgPath) ? asset('uploads/services/' . $s->image) : asset('img/placeholder-service.jpg') }}" alt="{{ $s->name }}">
+                    <img loading="lazy" src="{{ $svcImgPath && file_exists($svcImgPath) ? asset('uploads/services/' . $s->image) : asset('img/placeholder-service.jpg') }}" alt="{{ $s->name }}">
                 </div>
                 <div class="service-body">
                     <h3>{{ $s->name }}</h3>

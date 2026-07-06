@@ -16,7 +16,7 @@
              alt="{{ $service->name }}"
              style="width:100%; max-height:420px; object-fit:cover; border-radius: var(--radius); margin-bottom:48px;">
 
-        <div class="section-head">
+        <div class="section-head reveal-on-scroll">
             <span class="eyebrow">Pilih Sub-Paket</span>
             <h2>Sesuaikan dengan Kebutuhan &amp; Budget Anda</h2>
             <p>Setiap sub-paket punya cakupan berbeda dari layanan "{{ $service->name }}" di atas.</p>
@@ -24,7 +24,7 @@
 
         <div class="grid-3" style="align-items:stretch;">
             @foreach ($service->tiers() as $tier)
-            <div class="service-card" style="display:flex; flex-direction:column;">
+            <div class="service-card reveal-on-scroll" style="display:flex; flex-direction:column;">
                 <div class="service-body" style="display:flex; flex-direction:column; flex:1;">
                     <h3>{{ $tier['label'] }}</h3>
                     <p style="min-height:80px;">{{ $tier['description'] }}</p>

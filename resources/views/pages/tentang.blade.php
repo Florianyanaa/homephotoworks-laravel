@@ -1,7 +1,7 @@
 <x-layout title="Tentang Kami">
 
 <section class="page-hero">
-    <div class="container">
+    <div class="container page-hero-content">
         <span class="eyebrow">Tentang Kami</span>
         <h1>Cerita di Balik Home Photoworks</h1>
         <p>Studio foto yang lahir dari kecintaan pada seni visual dan momen manusia.</p>
@@ -10,7 +10,7 @@
 
 <section class="section">
     <div class="container split">
-        <img loading="lazy" src="{{ asset('img/placeholder-about.jpg') }}" alt="Tim Home Photoworks">
+        <img loading="lazy" src="{{ asset('img/placeholder-about.jpg') }}" alt="Tim Home Photoworks" class="reveal-on-scroll">
         <div>
             <span class="eyebrow">Perjalanan Kami</span>
             <h2>Dari Studio Kecil Menjadi Rumah Kreativitas</h2>
@@ -27,7 +27,7 @@
 
 <section class="section section-dark">
     <div class="container">
-        <div class="section-head">
+        <div class="section-head reveal-on-scroll">
             <span class="eyebrow">Nilai Kami</span>
             <h2>Prinsip yang Kami Pegang</h2>
         </div>

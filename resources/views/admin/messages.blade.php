@@ -7,7 +7,7 @@
         <div class="empty-state">Belum ada pesan masuk.</div>
     @else
     <table>
-        <thead><tr><th>Status</th><th>Nama</th><th>Email</th><th>Pesan</th><th>Waktu</th><th>Aksi</th></tr></thead>
+        <thead><tr><th>Status</th><th>Nama</th><th>Email</th><th>Telepon</th><th>Pesan</th><th>Waktu</th><th>Aksi</th></tr></thead>
         <tbody>
             @foreach ($messages as $m)
             <tr style="{{ $m->is_read ? '' : 'background:#fafafa; font-weight:600;' }}">
@@ -20,10 +20,21 @@
                 </td>
                 <td>{{ $m->name }}</td>
                 <td>{{ $m->email }}</td>
+                <td>{{ $m->phone ?: '-' }}</td>
                 <td style="max-width:320px;">{{ $m->message }}</td>
                 <td>{{ \Carbon\Carbon::parse($m->created_at)->translatedFormat('d M Y, H:i') }}</td>
                 <td class="action-icons">
-                    <a href="{{ 'https://wa.me/' . preg_replace('/[^0-9]/', '', '6285210400454') . '?text=' . rawurlencode("Halo {$m->name}, terima kasih sudah menghubungi Home Photoworks.") }}" target="_blank" rel="noopener">Balas WA</a>
+                    @if ($m->phone)
+                        @php
+                            $customerPhone = preg_replace('/[^0-9]/', '', $m->phone);
+                            if (str_starts_with($customerPhone, '0')) {
+                                $customerPhone = '62'.substr($customerPhone, 1);
+                            }
+                        @endphp
+                        <a href="{{ 'https://wa.me/' . $customerPhone . '?text=' . rawurlencode("Halo {$m->name}, terima kasih sudah menghubungi Home Photoworks.") }}" target="_blank" rel="noopener">Hubungi via WA</a>
+                    @else
+                        <span style="color:#d9d9d9;">Tanpa nomor WA</span>
+                    @endif
                     @if (!$m->is_read)
                         <form method="POST" action="{{ route('admin.messages.read', $m->id) }}" style="display:inline;">
                             @csrf

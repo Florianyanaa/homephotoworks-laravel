@@ -1,7 +1,7 @@
 <x-layout title="Kontak">
 
 <section class="page-hero">
-    <div class="container">
+    <div class="container page-hero-content">
         <span class="eyebrow">Hubungi Kami</span>
         <h1>Mari Diskusikan Sesi Foto Anda</h1>
         <p>Tim kami siap membantu menjawab pertanyaan seputar layanan &amp; jadwal.</p>
@@ -46,6 +46,10 @@
                 <div class="form-group">
                     <label>Email</label>
                     <input type="email" name="email" value="{{ old('email') }}" placeholder="email@contoh.com" required>
+                </div>
+                <div class="form-group">
+                    <label>No. Telepon / WhatsApp</label>
+                    <input type="text" name="phone" value="{{ old('phone') }}" placeholder="0812xxxxxxx" required>
                 </div>
                 <div class="form-group">
                     <label>Pesan</label>

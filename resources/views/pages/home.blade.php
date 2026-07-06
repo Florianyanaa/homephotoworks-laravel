@@ -19,7 +19,7 @@
 
 <section class="section">
     <div class="container">
-        <div class="section-head">
+        <div class="section-head reveal-on-scroll">
             <span class="eyebrow">Layanan Kami</span>
             <h2>Paket Fotografi Pilihan</h2>
             <p>Setiap paket dirancang dengan konsep dan pendekatan berbeda, disesuaikan dengan kebutuhan momen Anda.</p>
@@ -27,7 +27,7 @@
         <div class="grid-3">
             @foreach ($services as $s)
             @php $svcImgPath = $s->image ? public_path('uploads/services/' . $s->image) : null; @endphp
-            <div class="service-card">
+            <div class="service-card reveal-on-scroll">
                 <div class="service-thumb">
                     <img loading="lazy" src="{{ $svcImgPath && file_exists($svcImgPath) ? asset('uploads/services/' . $s->image) : asset('img/placeholder-service.jpg') }}" alt="{{ $s->name }}">
                 </div>
@@ -48,7 +48,7 @@
 
 <section class="section">
     <div class="container">
-        <div class="section-head">
+        <div class="section-head reveal-on-scroll">
             <span class="eyebrow">Galeri Karya</span>
             <h2>Cuplikan Hasil Sesi Foto</h2>
             <p>Sebagian kecil dari karya yang telah kami hasilkan bersama para klien.</p>
@@ -57,7 +57,7 @@
             @foreach ($galleryItems as $g)
             @php $galImgPath = public_path('uploads/gallery/' . $g->image); @endphp
             <a href="{{ route('galeri.show', $g->id) }}"
-               class="gallery-item gallery-item-link js-lightbox-trigger"
+               class="gallery-item gallery-item-link js-lightbox-trigger reveal-on-scroll"
                data-full="{{ file_exists($galImgPath) ? asset('uploads/gallery/' . $g->image) : asset('img/placeholder-gallery.jpg') }}"
                data-title="{{ $g->title }}"
                data-category="{{ $g->category }}"

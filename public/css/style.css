@@ -31,7 +31,10 @@ body {
     color: var(--near-black);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
+    opacity: 1;
+    transition: opacity 0.35s ease;
 }
+body.page-exit { opacity: 0; }
 
 a { text-decoration: none; color: inherit; }
 img { max-width: 100%; display: block; }
@@ -107,10 +110,8 @@ h1, h2, h3, h4 {
 .btn-danger:hover { background: #b00020; color: var(--white); }
 
 /* ---------- Header / Nav ---------- */
-/* Default: header dipakai di atas background PUTIH (Layanan, Galeri, Tentang,
-   Lokasi, Kontak, dll), jadi teksnya gelap secara default. Untuk halaman
-   Beranda yang heronya masih foto gelap, lihat override ".has-dark-hero"
-   di bagian bawah blok ini. */
+/* Default: solid putih + teks gelap (dipakai di semua halaman selain Beranda,
+   karena page-hero di halaman itu sekarang background putih juga) */
 .site-header {
     position: fixed;
     top: 0;
@@ -119,8 +120,7 @@ h1, h2, h3, h4 {
     z-index: 100;
     background: rgba(255,255,255,0.97);
     border-bottom: 1px solid #ececec;
-    box-shadow: 0 2px 14px rgba(0,0,0,0.05);
-    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 .header-inner {
     display: flex;
@@ -167,7 +167,6 @@ h1, h2, h3, h4 {
     color: var(--near-black) !important;
     padding: 10px 22px;
     border-radius: var(--radius);
-    border: 1px solid #d9d9d9;
 }
 .nav-cta:hover { background: var(--gray-light); }
 .nav-logout { color: var(--gray) !important; }
@@ -175,26 +174,30 @@ h1, h2, h3, h4 {
 .nav-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; }
 .nav-toggle span { width: 24px; height: 2px; background: var(--black); transition: background 0.3s ease; }
 
-/* ---------- Header di atas hero gelap (Beranda) ----------
-   Sebelum discroll (belum ada class .scrolled), header transparan
-   dan teksnya putih supaya kebaca di atas foto hero yang gelap. */
-body.has-dark-hero .site-header:not(.scrolled) {
+/* Khusus Beranda: transparan menyatu dengan foto hero sampai discroll */
+body.is-home .site-header {
     background: transparent;
-    border-bottom-color: transparent;
-    box-shadow: none;
+    border-bottom: 1px solid transparent;
 }
-body.has-dark-hero .site-header:not(.scrolled) .logo { color: var(--white); }
-body.has-dark-hero .site-header:not(.scrolled) .logo span { color: rgba(255,255,255,0.7); }
-body.has-dark-hero .site-header:not(.scrolled) .main-nav a { color: var(--white); }
-body.has-dark-hero .site-header:not(.scrolled) .nav-cta {
-    color: var(--white) !important;
-    border-color: rgba(255,255,255,0.5);
+body.is-home .site-header .logo { color: var(--white); }
+body.is-home .site-header .logo span { color: rgba(255,255,255,0.7); }
+body.is-home .site-header .main-nav a { color: var(--white); }
+body.is-home .site-header .nav-cta { color: var(--white) !important; border: 1px solid rgba(255,255,255,0.5); }
+body.is-home .site-header .nav-cta:hover { background: rgba(255,255,255,0.15); }
+body.is-home .site-header .nav-logout { color: rgba(255,255,255,0.7) !important; }
+body.is-home .site-header .nav-toggle span { background: var(--white); }
+
+body.is-home .site-header.scrolled {
+    background: rgba(255,255,255,0.97);
+    border-bottom: 1px solid #ececec;
 }
-body.has-dark-hero .site-header:not(.scrolled) .nav-cta:hover { background: rgba(255,255,255,0.15); }
-body.has-dark-hero .site-header:not(.scrolled) .nav-logout { color: rgba(255,255,255,0.7) !important; }
-body.has-dark-hero .site-header:not(.scrolled) .nav-toggle span { background: var(--white); }
-
-
+body.is-home .site-header.scrolled .logo { color: var(--near-black); }
+body.is-home .site-header.scrolled .logo span { color: var(--gray); }
+body.is-home .site-header.scrolled .main-nav a { color: var(--near-black); }
+body.is-home .site-header.scrolled .nav-cta { color: var(--near-black) !important; border-color: #d9d9d9; }
+body.is-home .site-header.scrolled .nav-cta:hover { background: var(--gray-light); }
+body.is-home .site-header.scrolled .nav-logout { color: var(--gray) !important; }
+body.is-home .site-header.scrolled .nav-toggle span { background: var(--black); }
 
 /* ---------- Hero ---------- */
 .hero {
@@ -472,7 +475,6 @@ tbody tr:hover { background: #fafafa; }
     color: var(--near-black);
     padding: 110px 0 60px;
     text-align: center;
-    border-bottom: 1px solid #ececec;
 }
 .page-hero h1 { font-size: 52px; }
 .page-hero p { color: var(--gray-dark); margin-top: 12px; }
@@ -641,33 +643,74 @@ tbody tr:hover { background: #fafafa; }
     .lightbox-content img { max-height: 60vh; }
 }
 
-/* =========================================================
-   SCROLL REVEAL — animasi masuk yang mulus saat elemen
-   terlihat di layar (dipicu otomatis lewat main.js)
-   ========================================================= */
-.reveal {
+/* ---------- Preloader (animasi pertama kali buka web) ---------- */
+.page-preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.7s ease, visibility 0.7s ease;
+    animation: forceHidePreloader 0s 4s forwards;
+}
+@keyframes forceHidePreloader {
+    to { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+.page-preloader-logo {
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: 5px;
+    color: var(--white);
     opacity: 0;
-    transform: translateY(36px);
-    will-change: opacity, transform;
+    animation: preloaderFadeIn 0.7s ease forwards 0.2s;
 }
-/* Pakai @keyframes (bukan `transition`) supaya tidak menimpa
-   transition hover yang sudah ada di elemen seperti .service-card
-   dan .gallery-item */
-.reveal.is-visible {
-    animation: revealIn 0.9s cubic-bezier(.16,.84,.44,1) forwards;
+.page-preloader-logo span { font-weight: 400; color: var(--gray-light); }
+@keyframes preloaderFadeIn {
+    to { opacity: 1; }
 }
-@keyframes revealIn {
-    from { opacity: 0; transform: translateY(36px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-/* Hormati preferensi pengguna yang minta animasi minim */
-@media (prefers-reduced-motion: reduce) {
-    .reveal { opacity: 1; transform: none; }
-    .reveal.is-visible { animation: none; }
+.page-preloader.loaded {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
-/* Bikin scroll bar terasa lebih halus di browser berbasis WebKit */
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: var(--off-white); }
-::-webkit-scrollbar-thumb { background: var(--gray-light); border-radius: 20px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gray); }
+/* Foto hero baru "muncul" halus setelah preloader selesai, bukan langsung nongol */
+.hero-content {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.hero-content.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Animasi teks di page-hero (Layanan, Tentang, Galeri, Kontak, Lokasi) — sama persis seperti Beranda */
+.page-hero-content {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.page-hero-content.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ---------- Reveal saat discroll (foto/kartu muncul halus, mirip web Kaira) ---------- */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(36px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+/* Efek berantai — item ke-2,3,4 dst muncul sedikit lebih telat dari item sebelumnya */
+.reveal-on-scroll:nth-child(2) { transition-delay: 0.08s; }
+.reveal-on-scroll:nth-child(3) { transition-delay: 0.16s; }
+.reveal-on-scroll:nth-child(4) { transition-delay: 0.24s; }
+.reveal-on-scroll:nth-child(5) { transition-delay: 0.32s; }
+.reveal-on-scroll:nth-child(6) { transition-delay: 0.4s; }
