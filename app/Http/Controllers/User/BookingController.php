@@ -19,6 +19,32 @@ class BookingController extends Controller
         return view('user.booking', compact('services', 'selectedService', 'selectedTier'));
     }
 
+    public function calendarData(Request $request)
+    {
+        $data = $request->validate([
+            'year' => ['required', 'integer', 'min:2020', 'max:2100'],
+            'month' => ['required', 'integer', 'min:1', 'max:12'],
+        ]);
+
+        $start = Carbon::create($data['year'], $data['month'], 1)->startOfMonth();
+        $end = $start->copy()->endOfMonth();
+
+        $counts = Booking::whereBetween('booking_date', [$start->toDateString(), $end->toDateString()])
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->selectRaw('booking_date, count(*) as total')
+            ->groupBy('booking_date')
+            ->pluck('total', 'booking_date');
+
+        // Format key tanggal konsisten Y-m-d (kadang driver DB mengembalikan objek/format beda)
+        $formatted = [];
+        foreach ($counts as $date => $total) {
+            $key = Carbon::parse($date)->format('Y-m-d');
+            $formatted[$key] = (int) $total;
+        }
+
+        return response()->json(['counts' => $formatted]);
+    }
+
     public function checkAvailability(Request $request)
     {
         $data = $request->validate([
