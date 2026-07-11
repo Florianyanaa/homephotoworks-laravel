@@ -55,7 +55,7 @@ $branches = [
 <section class="cta-band">
     <div class="container">
         <h2>Siap Booking Sesi Foto Anda?</h2>
-        <p>Pilih cabang terdekat, lalu booking paket favoritmu secara online.</p>
+        <p>Pilih cabang terdekat, lalu hubungi kami via WhatsApp untuk booking paket favoritmu.</p>
         <a href="{{ route('layanan') }}" class="btn btn-light">Lihat Paket Layanan</a>
     </div>
 </section>

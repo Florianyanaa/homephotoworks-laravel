@@ -14,26 +14,16 @@
 <div class="dash-wrap">
     <aside class="dash-sidebar">
         <div class="logo">HOME <span>PHOTOWORKS</span></div>
-        <span class="dash-role">{{ $role === 'admin' ? 'Panel Admin' : 'Area Pengguna' }}</span>
+        <span class="dash-role">Panel Admin</span>
 
         <nav class="dash-nav">
-        @if ($role === 'admin')
             <a href="{{ route('admin.dashboard') }}" class="{{ $active === 'dashboard' ? 'active' : '' }}">📊 Dashboard</a>
-            <a href="{{ route('admin.bookings.index') }}" class="{{ $active === 'bookings' ? 'active' : '' }}">🗓️ Pemesanan</a>
             <a href="{{ route('admin.services.index') }}" class="{{ $active === 'services' ? 'active' : '' }}">📷 Layanan</a>
             <a href="{{ route('admin.gallery.index') }}" class="{{ $active === 'gallery' ? 'active' : '' }}">🖼️ Galeri</a>
             <a href="{{ route('admin.users.index') }}" class="{{ $active === 'users' ? 'active' : '' }}">👥 Pengguna</a>
             <a href="{{ route('admin.messages.index') }}" class="{{ $active === 'messages' ? 'active' : '' }}">✉️ Pesan Masuk</a>
             <div class="divider"></div>
             <a href="{{ route('home') }}">🌐 Lihat Website</a>
-        @else
-            <a href="{{ route('user.dashboard') }}" class="{{ $active === 'dashboard' ? 'active' : '' }}">📊 Dashboard</a>
-            <a href="{{ route('user.booking.create') }}" class="{{ $active === 'booking' ? 'active' : '' }}">➕ Booking Baru</a>
-            <a href="{{ route('user.my-bookings') }}" class="{{ $active === 'my_bookings' ? 'active' : '' }}">🗓️ Pemesanan Saya</a>
-            <a href="{{ route('user.profile') }}" class="{{ $active === 'profile' ? 'active' : '' }}">👤 Profil</a>
-            <div class="divider"></div>
-            <a href="{{ route('home') }}">🌐 Lihat Website</a>
-        @endif
             <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('dash-logout-form').submit();">🚪 Keluar</a>
             <form id="dash-logout-form" method="POST" action="{{ route('logout') }}" style="display:none;">
                 @csrf

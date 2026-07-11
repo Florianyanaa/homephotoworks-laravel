@@ -1,33 +1,38 @@
 <x-dash-layout title="Dashboard Admin" active="dashboard" role="admin">
 
 <div class="cards-row">
-    <div class="stat-card"><div class="num">{{ (int) $totalUsers }}</div><div class="label">Total Pengguna</div></div>
     <div class="stat-card"><div class="num">{{ (int) $totalServices }}</div><div class="label">Paket Layanan</div></div>
-    <div class="stat-card"><div class="num">{{ (int) $totalBookings }}</div><div class="label">Total Pemesanan</div></div>
-    <div class="stat-card"><div class="num">{{ (int) $pendingBookings }}</div><div class="label">Menunggu Konfirmasi</div></div>
+    <div class="stat-card"><div class="num">{{ (int) $totalGallery }}</div><div class="label">Foto Galeri</div></div>
+    <div class="stat-card"><div class="num">{{ (int) $totalMessages }}</div><div class="label">Total Pertanyaan Masuk</div></div>
+    <div class="stat-card"><div class="num">{{ (int) $unreadMessages }}</div><div class="label">Belum Dibaca</div></div>
 </div>
 
 <div class="panel">
     <div class="panel-head">
-        <h2>Pemesanan Terbaru</h2>
-        <a href="{{ route('admin.bookings.index') }}" class="btn btn-outline btn-sm">Lihat Semua</a>
+        <h2>Pertanyaan Terbaru</h2>
+        <a href="{{ route('admin.messages.index') }}" class="btn btn-outline btn-sm">Lihat Semua</a>
     </div>
 
-    @if ($recentBookings->isEmpty())
-        <div class="empty-state">Belum ada pemesanan masuk.</div>
+    @if ($recentMessages->isEmpty())
+        <div class="empty-state">Belum ada pertanyaan masuk lewat form Kontak.</div>
     @else
     <table>
         <thead>
-            <tr><th>Pelanggan</th><th>Layanan</th><th>Tanggal</th><th>Jam</th><th>Status</th></tr>
+            <tr><th>Nama</th><th>Kontak</th><th>Pesan</th><th>Status</th></tr>
         </thead>
         <tbody>
-            @foreach ($recentBookings as $b)
+            @foreach ($recentMessages as $m)
             <tr>
-                <td>{{ $b->user->full_name }}</td>
-                <td>{{ $b->service->name }}@if($b->tier_label)<br><span style="color:#8a8a8a;font-size:12px;">{{ $b->tier_label }}</span>@endif</td>
-                <td>{{ \Carbon\Carbon::parse($b->booking_date)->translatedFormat('d F Y') }}</td>
-                <td>{{ substr($b->booking_time, 0, 5) }}</td>
-                <td>@include('partials.status-badge', ['status' => $b->status])</td>
+                <td>{{ $m->name }}</td>
+                <td style="color:#8a8a8a; font-size:13px;">{{ $m->email }}@if($m->phone)<br>{{ $m->phone }}@endif</td>
+                <td style="max-width:320px;">{{ \Illuminate\Support\Str::limit($m->message, 80) }}</td>
+                <td>
+                    @if ($m->is_read)
+                        <span class="badge badge-completed">Sudah Dibaca</span>
+                    @else
+                        <span class="badge badge-pending">Belum Dibaca</span>
+                    @endif
+                </td>
             </tr>
             @endforeach
         </tbody>

@@ -1,75 +1,107 @@
-<x-dash-layout title="Booking Baru" active="booking" role="user">
+<?php if (isset($component)) { $__componentOriginal23a33f287873b564aaf305a1526eada4 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal23a33f287873b564aaf305a1526eada4 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.layout','data' => ['title' => 'Booking Sesi Foto']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['title' => 'Booking Sesi Foto']); ?>
 
-<div class="panel" style="max-width:760px;">
-    <div class="panel-head"><h2>Form Booking Sesi Foto</h2></div>
+<section class="page-hero">
+    <div class="container page-hero-content">
+        <span class="eyebrow">Booking Online</span>
+        <h1>Booking Sesi Foto Anda</h1>
+        <p>Isi form di bawah ini, tim kami akan menghubungi Anda lewat WhatsApp/telepon untuk konfirmasi jadwal.</p>
+    </div>
+</section>
 
-    @if ($services->isEmpty())
-        <div class="empty-state">Belum ada layanan yang tersedia saat ini.</div>
-    @else
-    <form method="POST" action="{{ route('user.booking.store') }}" id="bookingForm">
-        @csrf
-        <div class="form-group">
-            <label>Pilih Paket Layanan</label>
-            <select name="service_id" id="serviceSelect" required>
-                <option value="">-- Pilih Paket --</option>
-                @foreach ($services as $s)
-                    <option value="{{ $s->id }}"
-                        data-tiers='@json(array_values($s->tiers()))'
-                        {{ $selectedService === $s->id ? 'selected' : '' }}>
-                        {{ $s->name }} ({{ (int) $s->duration_minutes }} menit)
-                    </option>
-                @endforeach
-            </select>
-        </div>
+<section class="section">
+    <div class="container">
+    <div class="panel" style="max-width:760px; margin:0 auto;">
 
-        <div class="form-group">
-            <label>Pilih Sub-Paket</label>
-            <select name="tier" id="tierSelect" required>
-                <option value="">-- Pilih layanan dulu --</option>
-            </select>
-            <div id="tierPriceHint" style="margin-top:8px; font-size:13px; color:#666;"></div>
-        </div>
+        <?php if($services->isEmpty()): ?>
+            <div class="empty-state">Belum ada layanan yang tersedia saat ini.</div>
+        <?php else: ?>
+        <form method="POST" action="<?php echo e(route('booking.store')); ?>" id="bookingForm">
+            <?php echo csrf_field(); ?>
 
-        <div class="form-group">
-            <label>Pilih Tanggal Booking</label>
-
-            <div class="booking-calendar" id="bookingCalendar">
-                <div class="booking-calendar-head">
-                    <button type="button" class="cal-nav" id="calPrev" aria-label="Bulan sebelumnya">&#8249;</button>
-                    <span class="cal-month-label" id="calMonthLabel"></span>
-                    <button type="button" class="cal-nav" id="calNext" aria-label="Bulan berikutnya">&#8250;</button>
-                </div>
-                <div class="booking-calendar-weekdays">
-                    <span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span>
-                </div>
-                <div class="booking-calendar-grid" id="calGrid"></div>
-                <div class="booking-calendar-legend">
-                    <span><i class="dot dot-available"></i> Longgar</span>
-                    <span><i class="dot dot-busy"></i> Lumayan Penuh</span>
-                    <span><i class="dot dot-full"></i> Padat</span>
-                </div>
+            <div class="form-group">
+                <label>Nama Lengkap</label>
+                <input type="text" name="customer_name" value="<?php echo e(old('customer_name')); ?>" placeholder="Nama lengkap Anda" required>
             </div>
 
-            <input type="hidden" name="booking_date" id="bookingDate" value="{{ old('booking_date') }}" required>
-            <div id="selectedDateLabel" style="margin-top:10px; font-size:13px; color:#555;"></div>
-        </div>
+            <div class="form-group">
+                <label>Nomor WhatsApp / Telepon</label>
+                <input type="text" name="customer_phone" value="<?php echo e(old('customer_phone')); ?>" placeholder="08xxxxxxxxxx" required>
+            </div>
 
-        <div class="form-group">
-            <label>Jam Booking</label>
-            <input type="time" name="booking_time" id="bookingTime" value="{{ old('booking_time') }}" required>
-        </div>
+            <div class="form-group">
+                <label>Pilih Paket Layanan</label>
+                <select name="service_id" id="serviceSelect" required>
+                    <option value="">-- Pilih Paket --</option>
+                    <?php $__currentLoopData = $services; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($s->id); ?>"
+                            data-tiers='<?php echo json_encode(array_values($s->tiers()), 15, 512) ?>'
+                            <?php echo e($selectedService === $s->id ? 'selected' : ''); ?>>
+                            <?php echo e($s->name); ?> (<?php echo e((int) $s->duration_minutes); ?> menit)
+                        </option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </select>
+            </div>
 
-        <div id="availabilityHint" style="margin-bottom:16px; font-size:13px;"></div>
+            <div class="form-group">
+                <label>Pilih Sub-Paket</label>
+                <select name="tier" id="tierSelect" required>
+                    <option value="">-- Pilih layanan dulu --</option>
+                </select>
+                <div id="tierPriceHint" style="margin-top:8px; font-size:13px; color:#666;"></div>
+            </div>
 
-        <div class="form-group">
-            <label>Catatan Tambahan (opsional)</label>
-            <textarea name="notes" rows="4" placeholder="Contoh: konsep foto, jumlah orang, referensi gaya, dll.">{{ old('notes') }}</textarea>
-        </div>
+            <div class="form-group">
+                <label>Pilih Tanggal Booking</label>
 
-        <button type="submit" class="btn btn-primary btn-block" id="submitBookingBtn">Kirim Permintaan Booking</button>
-    </form>
-    @endif
-</div>
+                <div class="booking-calendar" id="bookingCalendar">
+                    <div class="booking-calendar-head">
+                        <button type="button" class="cal-nav" id="calPrev" aria-label="Bulan sebelumnya">&#8249;</button>
+                        <span class="cal-month-label" id="calMonthLabel"></span>
+                        <button type="button" class="cal-nav" id="calNext" aria-label="Bulan berikutnya">&#8250;</button>
+                    </div>
+                    <div class="booking-calendar-weekdays">
+                        <span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span>
+                    </div>
+                    <div class="booking-calendar-grid" id="calGrid"></div>
+                    <div class="booking-calendar-legend">
+                        <span><i class="dot dot-available"></i> Longgar</span>
+                        <span><i class="dot dot-busy"></i> Lumayan Penuh</span>
+                        <span><i class="dot dot-full"></i> Padat</span>
+                    </div>
+                </div>
+
+                <input type="hidden" name="booking_date" id="bookingDate" value="<?php echo e(old('booking_date')); ?>" required>
+                <div id="selectedDateLabel" style="margin-top:10px; font-size:13px; color:#555;"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Jam Booking</label>
+                <input type="time" name="booking_time" id="bookingTime" value="<?php echo e(old('booking_time')); ?>" required>
+            </div>
+
+            <div id="availabilityHint" style="margin-bottom:16px; font-size:13px;"></div>
+
+            <div class="form-group">
+                <label>Catatan Tambahan (opsional)</label>
+                <textarea name="notes" rows="4" placeholder="Contoh: konsep foto, jumlah orang, referensi gaya, dll."><?php echo e(old('notes')); ?></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="submitBookingBtn">Kirim Booking</button>
+        </form>
+        <?php endif; ?>
+
+    </div>
+    </div>
+</section>
 
 <script>
 (function () {
@@ -81,15 +113,15 @@
     var availabilityHint = document.getElementById('availabilityHint');
     var submitBtn = document.getElementById('submitBookingBtn');
     var selectedDateLabel = document.getElementById('selectedDateLabel');
-    var preselectTier = @json($selectedTier ?: '');
-    var checkUrl = @json(route('user.booking.check-availability'));
-    var calendarUrl = @json(route('user.booking.calendar-data'));
+    var preselectTier = <?php echo json_encode($selectedTier ?: '', 15, 512) ?>;
+    var checkUrl = <?php echo json_encode(route('booking.check-availability'), 15, 512) ?>;
+    var calendarUrl = <?php echo json_encode(route('booking.calendar-data'), 15, 512) ?>;
 
     var monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
     var today = new Date();
     today.setHours(0,0,0,0);
     var viewYear = today.getFullYear();
-    var viewMonth = today.getMonth(); // 0-11
+    var viewMonth = today.getMonth();
     var selectedDate = dateInput.value || null;
 
     function formatRupiah(num) {
@@ -176,7 +208,7 @@
     var calMonthLabel = document.getElementById('calMonthLabel');
     var calPrev = document.getElementById('calPrev');
     var calNext = document.getElementById('calNext');
-    var monthCache = {}; // simpan hasil fetch biar tidak fetch ulang bulan yang sama
+    var monthCache = {};
 
     function busyLevel(count) {
         if (count <= 0) return 'available';
@@ -186,10 +218,9 @@
 
     function renderCalendar() {
         calMonthLabel.textContent = monthNames[viewMonth] + ' ' + viewYear;
-        calGrid.innerHTML = '';
 
         var cacheKey = viewYear + '-' + viewMonth;
-        var firstDay = new Date(viewYear, viewMonth, 1).getDay(); // 0=Minggu
+        var firstDay = new Date(viewYear, viewMonth, 1).getDay();
         var totalDays = new Date(viewYear, viewMonth + 1, 0).getDate();
 
         function buildGrid(counts) {
@@ -282,4 +313,14 @@
 })();
 </script>
 
-</x-dash-layout>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal23a33f287873b564aaf305a1526eada4)): ?>
+<?php $attributes = $__attributesOriginal23a33f287873b564aaf305a1526eada4; ?>
+<?php unset($__attributesOriginal23a33f287873b564aaf305a1526eada4); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal23a33f287873b564aaf305a1526eada4)): ?>
+<?php $component = $__componentOriginal23a33f287873b564aaf305a1526eada4; ?>
+<?php unset($__componentOriginal23a33f287873b564aaf305a1526eada4); ?>
+<?php endif; ?>
+<?php /**PATH C:\laragon\www\homephotoworks-laravel\resources\views/booking.blade.php ENDPATH**/ ?>

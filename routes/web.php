@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
 use App\Http\Controllers\Admin\MessageController as AdminMessageController;
@@ -9,10 +8,6 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\User\BookingController;
-use App\Http\Controllers\User\DashboardController;
-use App\Http\Controllers\User\MyBookingController;
-use App\Http\Controllers\User\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,35 +27,12 @@ Route::post('/kontak', [ContactMessageController::class, 'store'])->name('kontak
 
 /*
 |--------------------------------------------------------------------------
-| Autentikasi
+| Login Admin (tidak ada registrasi publik — hanya admin yang punya akun)
 |--------------------------------------------------------------------------
 */
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register'])->name('register.attempt');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-/*
-|--------------------------------------------------------------------------
-| Area Pengguna (harus login)
-|--------------------------------------------------------------------------
-*/
-Route::middleware('auth')->prefix('user')->name('user.')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    Route::get('/booking', [BookingController::class, 'create'])->name('booking.create');
-    Route::get('/booking/check-availability', [BookingController::class, 'checkAvailability'])->name('booking.check-availability');
-    Route::get('/booking/calendar-data', [BookingController::class, 'calendarData'])->name('booking.calendar-data');
-    Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
-
-    Route::get('/my-bookings', [MyBookingController::class, 'index'])->name('my-bookings');
-    Route::post('/my-bookings/{id}/cancel', [MyBookingController::class, 'cancel'])->name('my-bookings.cancel');
-
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
-    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::post('/profile/password', [ProfileController::class, 'changePassword'])->name('profile.password');
-});
 
 /*
 |--------------------------------------------------------------------------
@@ -69,10 +41,6 @@ Route::middleware('auth')->prefix('user')->name('user.')->group(function () {
 */
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-
-    Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
-    Route::post('/bookings/status', [AdminBookingController::class, 'updateStatus'])->name('bookings.status');
-    Route::post('/bookings/{id}/delete', [AdminBookingController::class, 'destroy'])->name('bookings.destroy');
 
     Route::get('/services', [AdminServiceController::class, 'index'])->name('services.index');
     Route::post('/services', [AdminServiceController::class, 'store'])->name('services.store');

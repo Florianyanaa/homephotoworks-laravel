@@ -42,26 +42,16 @@ unset($__defined_vars); ?>
 <div class="dash-wrap">
     <aside class="dash-sidebar">
         <div class="logo">HOME <span>PHOTOWORKS</span></div>
-        <span class="dash-role"><?php echo e($role === 'admin' ? 'Panel Admin' : 'Area Pengguna'); ?></span>
+        <span class="dash-role">Panel Admin</span>
 
         <nav class="dash-nav">
-        <?php if($role === 'admin'): ?>
             <a href="<?php echo e(route('admin.dashboard')); ?>" class="<?php echo e($active === 'dashboard' ? 'active' : ''); ?>">📊 Dashboard</a>
-            <a href="<?php echo e(route('admin.bookings.index')); ?>" class="<?php echo e($active === 'bookings' ? 'active' : ''); ?>">🗓️ Pemesanan</a>
             <a href="<?php echo e(route('admin.services.index')); ?>" class="<?php echo e($active === 'services' ? 'active' : ''); ?>">📷 Layanan</a>
             <a href="<?php echo e(route('admin.gallery.index')); ?>" class="<?php echo e($active === 'gallery' ? 'active' : ''); ?>">🖼️ Galeri</a>
             <a href="<?php echo e(route('admin.users.index')); ?>" class="<?php echo e($active === 'users' ? 'active' : ''); ?>">👥 Pengguna</a>
             <a href="<?php echo e(route('admin.messages.index')); ?>" class="<?php echo e($active === 'messages' ? 'active' : ''); ?>">✉️ Pesan Masuk</a>
             <div class="divider"></div>
             <a href="<?php echo e(route('home')); ?>">🌐 Lihat Website</a>
-        <?php else: ?>
-            <a href="<?php echo e(route('user.dashboard')); ?>" class="<?php echo e($active === 'dashboard' ? 'active' : ''); ?>">📊 Dashboard</a>
-            <a href="<?php echo e(route('user.booking.create')); ?>" class="<?php echo e($active === 'booking' ? 'active' : ''); ?>">➕ Booking Baru</a>
-            <a href="<?php echo e(route('user.my-bookings')); ?>" class="<?php echo e($active === 'my_bookings' ? 'active' : ''); ?>">🗓️ Pemesanan Saya</a>
-            <a href="<?php echo e(route('user.profile')); ?>" class="<?php echo e($active === 'profile' ? 'active' : ''); ?>">👤 Profil</a>
-            <div class="divider"></div>
-            <a href="<?php echo e(route('home')); ?>">🌐 Lihat Website</a>
-        <?php endif; ?>
             <a href="<?php echo e(route('logout')); ?>" onclick="event.preventDefault(); document.getElementById('dash-logout-form').submit();">🚪 Keluar</a>
             <form id="dash-logout-form" method="POST" action="<?php echo e(route('logout')); ?>" style="display:none;">
                 <?php echo csrf_field(); ?>

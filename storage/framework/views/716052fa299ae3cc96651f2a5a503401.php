@@ -62,18 +62,11 @@ unset($__defined_vars); ?>
             <a href="<?php echo e(route('kontak')); ?>">Kontak</a>
 
             <?php if(auth()->guard()->check()): ?>
-                <?php if(auth()->user()->isAdmin()): ?>
-                    <a href="<?php echo e(route('admin.dashboard')); ?>" class="nav-cta">Dashboard Admin</a>
-                <?php else: ?>
-                    <a href="<?php echo e(route('user.dashboard')); ?>" class="nav-cta">Dashboard Saya</a>
-                <?php endif; ?>
+                <a href="<?php echo e(route('admin.dashboard')); ?>" class="nav-cta">Dashboard Admin</a>
                 <form method="POST" action="<?php echo e(route('logout')); ?>" style="display:inline;">
                     <?php echo csrf_field(); ?>
                     <button type="submit" class="nav-logout" style="background:none;border:none;cursor:pointer;">Keluar</button>
                 </form>
-            <?php else: ?>
-                <a href="<?php echo e(route('login')); ?>" class="nav-login">Masuk</a>
-                <a href="<?php echo e(route('register')); ?>" class="nav-cta">Daftar</a>
             <?php endif; ?>
         </nav>
     </div>

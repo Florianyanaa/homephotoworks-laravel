@@ -12,7 +12,7 @@
 <div class="auth-wrap">
     <div class="auth-card">
         <h1>Masuk</h1>
-        <p class="sub">Masuk ke akun Home Photoworks Anda</p>
+        <p class="sub">Login khusus Admin Home Photoworks</p>
 
         <?php if($errors->any()): ?>
             <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -32,8 +32,6 @@
             </div>
             <button type="submit" class="btn btn-primary btn-block">Masuk</button>
         </form>
-
-        <p class="form-hint">Belum punya akun? <a href="<?php echo e(route('register')); ?>">Daftar di sini</a></p>
     </div>
 </div>
 

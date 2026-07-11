@@ -34,18 +34,11 @@
             <a href="{{ route('kontak') }}">Kontak</a>
 
             @auth
-                @if (auth()->user()->isAdmin())
-                    <a href="{{ route('admin.dashboard') }}" class="nav-cta">Dashboard Admin</a>
-                @else
-                    <a href="{{ route('user.dashboard') }}" class="nav-cta">Dashboard Saya</a>
-                @endif
+                <a href="{{ route('admin.dashboard') }}" class="nav-cta">Dashboard Admin</a>
                 <form method="POST" action="{{ route('logout') }}" style="display:inline;">
                     @csrf
                     <button type="submit" class="nav-logout" style="background:none;border:none;cursor:pointer;">Keluar</button>
                 </form>
-            @else
-                <a href="{{ route('login') }}" class="nav-login">Masuk</a>
-                <a href="{{ route('register') }}" class="nav-cta">Daftar</a>
             @endauth
         </nav>
     </div>

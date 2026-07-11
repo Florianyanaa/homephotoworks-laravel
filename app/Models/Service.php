@@ -23,11 +23,6 @@ class Service extends Model
         ];
     }
 
-    public function bookings()
-    {
-        return $this->hasMany(Booking::class);
-    }
-
     /**
      * Sub-paket di dalam layanan ini: Seikhlasnya, Small, Medium, Large.
      * Harga Small = harga dasar, Medium = 1.5x, Large = 2x.

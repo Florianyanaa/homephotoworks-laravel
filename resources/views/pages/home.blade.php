@@ -79,8 +79,8 @@
 <section class="cta-band">
     <div class="container">
         <h2>Siap Mengabadikan Momen Anda?</h2>
-        <p>Buat akun dan pesan sesi foto pertama Anda hari ini juga.</p>
-        <a href="{{ auth()->check() ? route('user.booking.create') : route('register') }}" class="btn btn-light">Booking Sekarang</a>
+        <p>Hubungi kami untuk tanya jadwal &amp; konsultasi paket foto yang cocok untuk Anda.</p>
+        <a href="{{ route('kontak') }}" class="btn btn-light">Hubungi Kami</a>
     </div>
 </section>
 

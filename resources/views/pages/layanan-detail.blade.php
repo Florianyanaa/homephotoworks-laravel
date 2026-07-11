@@ -35,13 +35,7 @@
                             <span class="price-tag">Rp {{ number_format($tier['price'], 0, ',', '.') }}</span>
                         @endif
                     </div>
-                    @auth
-                        @if (!auth()->user()->isAdmin())
-                            <a href="{{ route('user.booking.create', ['service_id' => $service->id, 'tier' => $tier['key']]) }}" class="btn btn-primary btn-block">Booking {{ $tier['label'] }}</a>
-                        @endif
-                    @else
-                        <a href="{{ route('login') }}" class="btn btn-primary btn-block">Masuk untuk Booking</a>
-                    @endauth
+                    <a href="{{ route('kontak') }}" class="btn btn-primary btn-block">Tanya Paket Ini</a>
                 </div>
             </div>
             @endforeach

@@ -33,9 +33,4 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
-
-    public function bookings()
-    {
-        return $this->hasMany(Booking::class);
-    }
 }
