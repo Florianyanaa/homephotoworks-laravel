@@ -138,7 +138,7 @@
 
         <div class="coming-soon-contact">
             <a href="https://wa.me/6285210400454" target="_blank" rel="noopener">WhatsApp Kami</a>
-            <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://www.instagram.com/homephotoworks_official?igsh=MTlna2gwcGE0MGNmcQ%3D%3D&utm_source=qr" target="_blank" rel="noopener">Instagram</a>
         </div>
     </div>
 </section>

@@ -22,7 +22,17 @@
         <?php if($galleryItems->isEmpty()): ?>
             <div class="empty-state">Belum ada foto di galeri.</div>
         <?php else: ?>
-        <div class="gallery-grid">
+        <?php $categories = $galleryItems->pluck('category')->filter()->unique()->sort()->values(); ?>
+        <?php if($categories->count() > 1): ?>
+        <div class="gallery-filter" id="galleryFilter">
+            <button type="button" class="gallery-filter-btn active" data-filter="all">Semua</button>
+            <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <button type="button" class="gallery-filter-btn" data-filter="<?php echo e($cat); ?>"><?php echo e($cat); ?></button>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </div>
+        <?php endif; ?>
+
+        <div class="gallery-grid" id="galleryGrid">
             <?php $__currentLoopData = $galleryItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $g): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <?php $galImgPath = public_path('uploads/gallery/' . $g->image); ?>
             <a href="<?php echo e(route('galeri.show', $g->id)); ?>"
@@ -39,9 +49,41 @@
             </a>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
+        <p class="gallery-empty-filter" id="galleryEmptyFilter" style="display:none;">Belum ada foto untuk kategori ini.</p>
         <?php endif; ?>
     </div>
 </section>
+
+<script>
+(function () {
+    var filterBar = document.getElementById('galleryFilter');
+    if (!filterBar) return;
+
+    var buttons = filterBar.querySelectorAll('.gallery-filter-btn');
+    var items = document.querySelectorAll('#galleryGrid .gallery-item');
+    var emptyMsg = document.getElementById('galleryEmptyFilter');
+
+    filterBar.addEventListener('click', function (e) {
+        var btn = e.target.closest('.gallery-filter-btn');
+        if (!btn) return;
+
+        buttons.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+
+        var filter = btn.getAttribute('data-filter');
+        var visibleCount = 0;
+
+        items.forEach(function (item) {
+            var match = filter === 'all' || item.getAttribute('data-category') === filter;
+            item.style.display = match ? '' : 'none';
+            if (match) visibleCount++;
+        });
+
+        emptyMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+    });
+})();
+</script>
+
 
  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>

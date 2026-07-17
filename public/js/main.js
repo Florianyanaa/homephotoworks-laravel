@@ -167,6 +167,55 @@ document.addEventListener('DOMContentLoaded', function () {
         window.addEventListener('scroll', onScroll, { passive: true });
     }
 
+    // Parallax halus di foto hero — foto bergerak sedikit lebih lambat dari
+    // konten saat discroll, memberi kesan kedalaman (depth). Cuma jalan
+    // selagi hero masih kelihatan, dan dimatikan buat yang minta animasi minim.
+    var heroSlider = document.querySelector('.hero-bg-slider');
+    var heroSection = document.querySelector('.hero');
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (heroSlider && heroSection && !prefersReducedMotion) {
+        var parallaxTicking = false;
+
+        var applyParallax = function () {
+            var heroHeight = heroSection.offsetHeight;
+            var scrollY = window.scrollY;
+
+            if (scrollY <= heroHeight) {
+                var offset = Math.min(scrollY * 0.3, 80);
+                heroSlider.style.transform = 'translateY(' + offset + 'px)';
+            }
+
+            parallaxTicking = false;
+        };
+
+        var onParallaxScroll = function () {
+            if (!parallaxTicking) {
+                requestAnimationFrame(applyParallax);
+                parallaxTicking = true;
+            }
+        };
+
+        applyParallax();
+        window.addEventListener('scroll', onParallaxScroll, { passive: true });
+    }
+
+    // Efek shimmer/kilau saat gambar galeri masih loading — biar tidak
+    // langsung nongol kotak kosong sebelum foto beneran tampil.
+    document.querySelectorAll('.gallery-item img').forEach(function (img) {
+        var item = img.closest('.gallery-item');
+        if (!item) return;
+
+        var markLoaded = function () { item.classList.add('img-loaded'); };
+
+        if (img.complete && img.naturalWidth > 0) {
+            markLoaded();
+        } else {
+            img.addEventListener('load', markLoaded);
+            img.addEventListener('error', markLoaded); // biar shimmer tidak nyangkut selamanya kalau gambar gagal dimuat
+        }
+    });
+
     // Reveal foto/kartu saat discroll (pakai IntersectionObserver — ringan, tidak bikin lag)
     var revealEls = document.querySelectorAll('.reveal-on-scroll');
     if (revealEls.length && 'IntersectionObserver' in window) {

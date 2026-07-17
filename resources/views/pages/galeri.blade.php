@@ -13,7 +13,17 @@
         @if ($galleryItems->isEmpty())
             <div class="empty-state">Belum ada foto di galeri.</div>
         @else
-        <div class="gallery-grid">
+        @php $categories = $galleryItems->pluck('category')->filter()->unique()->sort()->values(); @endphp
+        @if ($categories->count() > 1)
+        <div class="gallery-filter" id="galleryFilter">
+            <button type="button" class="gallery-filter-btn active" data-filter="all">Semua</button>
+            @foreach ($categories as $cat)
+                <button type="button" class="gallery-filter-btn" data-filter="{{ $cat }}">{{ $cat }}</button>
+            @endforeach
+        </div>
+        @endif
+
+        <div class="gallery-grid" id="galleryGrid">
             @foreach ($galleryItems as $g)
             @php $galImgPath = public_path('uploads/gallery/' . $g->image); @endphp
             <a href="{{ route('galeri.show', $g->id) }}"
@@ -30,8 +40,40 @@
             </a>
             @endforeach
         </div>
+        <p class="gallery-empty-filter" id="galleryEmptyFilter" style="display:none;">Belum ada foto untuk kategori ini.</p>
         @endif
     </div>
 </section>
+
+<script>
+(function () {
+    var filterBar = document.getElementById('galleryFilter');
+    if (!filterBar) return;
+
+    var buttons = filterBar.querySelectorAll('.gallery-filter-btn');
+    var items = document.querySelectorAll('#galleryGrid .gallery-item');
+    var emptyMsg = document.getElementById('galleryEmptyFilter');
+
+    filterBar.addEventListener('click', function (e) {
+        var btn = e.target.closest('.gallery-filter-btn');
+        if (!btn) return;
+
+        buttons.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+
+        var filter = btn.getAttribute('data-filter');
+        var visibleCount = 0;
+
+        items.forEach(function (item) {
+            var match = filter === 'all' || item.getAttribute('data-category') === filter;
+            item.style.display = match ? '' : 'none';
+            if (match) visibleCount++;
+        });
+
+        emptyMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+    });
+})();
+</script>
+
 
 </x-layout>
