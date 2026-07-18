@@ -9,6 +9,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+<link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
 </head>
 <body>
 <div class="dash-wrap">
@@ -21,7 +24,13 @@
             <a href="{{ route('admin.services.index') }}" class="{{ $active === 'services' ? 'active' : '' }}">📷 Layanan</a>
             <a href="{{ route('admin.gallery.index') }}" class="{{ $active === 'gallery' ? 'active' : '' }}">🖼️ Galeri</a>
             <a href="{{ route('admin.users.index') }}" class="{{ $active === 'users' ? 'active' : '' }}">👥 Pengguna</a>
-            <a href="{{ route('admin.messages.index') }}" class="{{ $active === 'messages' ? 'active' : '' }}">✉️ Pesan Masuk</a>
+            <a href="{{ route('admin.messages.index') }}" class="{{ $active === 'messages' ? 'active' : '' }}">
+                ✉️ Pesan Masuk
+                @php $unreadMsgCount = \App\Models\ContactMessage::where('is_read', false)->count(); @endphp
+                @if ($unreadMsgCount > 0)
+                    <span class="sidebar-badge">{{ $unreadMsgCount }}</span>
+                @endif
+            </a>
             <div class="divider"></div>
             <a href="{{ route('home') }}">🌐 Lihat Website</a>
             <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('dash-logout-form').submit();">🚪 Keluar</a>
