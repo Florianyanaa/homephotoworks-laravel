@@ -107,6 +107,16 @@ document.addEventListener('click', function (e) {
     }, 320);
 });
 
+// Perbaikan bug: kalau halaman ini dibuka lagi lewat tombol Back/Forward
+// browser, beberapa browser (terutama Chrome & Safari) mengembalikan
+// halaman dari "bfcache" persis di kondisi terakhir sebelum ditinggal —
+// yaitu saat masih dalam status memudar (class 'page-exit', opacity: 0).
+// Makanya halaman kelihatan putih/kosong. Perbaikannya: begitu halaman
+// muncul lagi (baik normal maupun dari bfcache), pastikan class itu dicopot.
+window.addEventListener('pageshow', function (event) {
+    document.body.classList.remove('page-exit');
+});
+
 // Preloader — hilang halus begitu halaman selesai dimuat,
 // lalu foto hero "muncul" dengan animasi fade + slide-up.
 window.addEventListener('load', function () {

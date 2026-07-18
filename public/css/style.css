@@ -182,7 +182,7 @@ body.is-home .site-header {
 body.is-home .site-header .logo { color: var(--white); }
 body.is-home .site-header .logo span { color: rgba(255,255,255,0.7); }
 body.is-home .site-header .main-nav a { color: var(--white); }
-body.is-home .site-header .nav-cta { color: var(--white) !important; border: 1px solid rgba(255,255,255,0.5); }
+body.is-home .site-header .nav-cta { color: var(--white) !important; border: none; }
 body.is-home .site-header .nav-cta:hover { background: rgba(255,255,255,0.15); }
 body.is-home .site-header .nav-logout { color: rgba(255,255,255,0.7) !important; }
 body.is-home .site-header .nav-toggle span { background: var(--white); }
@@ -291,8 +291,31 @@ body.is-home .site-header.scrolled .nav-toggle span { background: var(--black); 
 }
 .service-card:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.08); transform: translateY(-6px); }
 .location-card { display: flex; flex-direction: column; }
-.location-map { height: 160px; background: var(--off-white); }
+.location-map { height: 160px; background: var(--off-white); position: relative; }
 .location-map iframe { width: 100%; height: 100%; border: 0; display: block; }
+.location-map-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: rgba(0,0,0,0.02);
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 10px;
+    opacity: 0;
+    transition: opacity 0.25s ease, background 0.25s ease;
+}
+.location-map:hover .location-map-overlay { opacity: 1; background: rgba(0,0,0,0.08); }
+.location-map-overlay span {
+    background: rgba(20,20,20,0.85);
+    color: var(--white);
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    padding: 6px 14px;
+    border-radius: 20px;
+}
+.location-map-overlay.is-active { display: none; }
 .location-card .service-body { display: flex; flex-direction: column; flex: 1; }
 .location-card .service-body p { flex: 1; }
 .location-card .service-body .btn { margin-top: auto; }
@@ -467,6 +490,28 @@ body.is-home .site-header.scrolled .nav-toggle span { background: var(--black); 
 }
 .dash-nav a:hover, .dash-nav a.active { background: rgba(255,255,255,0.08); color: var(--white); }
 .dash-nav .divider { height: 1px; background: #262626; margin: 18px 0; }
+.sidebar-badge {
+    margin-left: auto;
+    background: #c0392b;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    animation: sidebarBadgePulse 1.8s ease-in-out infinite;
+}
+@keyframes sidebarBadgePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .sidebar-badge { animation: none; }
+}
 
 .dash-main { padding: 40px 44px; background: var(--off-white); }
 .dash-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 34px; }

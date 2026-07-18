@@ -5,18 +5,30 @@ $branches = [
     [
         'name' => 'Cabang Bekasi',
         'address' => 'Rukan Grand Galaxy City Blok RSA 2 No. 16, RT.002/RW.002, Jaka Setia, Kec. Bekasi Sel., Kota Bks, Jawa Barat 17147',
+        'lat' => -6.2781622,
+        'lng' => 106.9733554,
+        'maps_url' => 'https://maps.app.goo.gl/iMCGMvB3SyF5vPKT9',
     ],
     [
         'name' => 'Cabang Kelapa Gading',
         'address' => 'Jl. Gading Griya Lestari Raya No.H1/35, RT.1/RW.9, Sukapura, Kec. Cilincing, Jkt Utara, Daerah Khusus Ibukota Jakarta 14140',
+        'lat' => -6.1411602,
+        'lng' => 106.917314,
+        'maps_url' => 'https://maps.app.goo.gl/JwV2vNguM99etmvL8',
     ],
     [
         'name' => 'Cabang Bogor',
         'address' => 'Braja Mustika Hotel, Komplek Ruko Jl. DR. Sumeru No.22, RT.01/RW.01, Menteng, Kec. Bogor Bar., Kota Bogor, Jawa Barat 16143',
+        'lat' => -6.5818938,
+        'lng' => 106.7778633,
+        'maps_url' => 'https://maps.app.goo.gl/w5EfyCZBNJRcJ7GS8',
     ],
     [
         'name' => 'Cabang Pusat Tangerang',
         'address' => 'Jl. Bahagia Raya No.4 No.d3, RT.004/RW.003, Gebang Raya, Kec. Periuk, Kota Tangerang, Banten 15132',
+        'lat' => -6.1810301,
+        'lng' => 106.5883524,
+        'maps_url' => 'https://maps.app.goo.gl/N8BbkPCnipM1Pn8H8',
     ],
 ];
 @endphp
@@ -36,15 +48,18 @@ $branches = [
             <div class="service-card location-card">
                 <div class="location-map">
                     <iframe
-                        src="{{ 'https://www.google.com/maps?q=' . urlencode($b['address']) . '&output=embed' }}"
+                        src="{{ 'https://www.google.com/maps?q=' . $b['lat'] . ',' . $b['lng'] . '&z=16&output=embed' }}"
                         loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade"
                         allowfullscreen></iframe>
+                    <div class="location-map-overlay" data-map-overlay>
+                        <span>Klik untuk berinteraksi dengan peta</span>
+                    </div>
                 </div>
                 <div class="service-body">
                     <h3>{{ $b['name'] }}</h3>
                     <p>{{ $b['address'] }}</p>
-                    <a href="{{ 'https://www.google.com/maps/search/?api=1&query=' . urlencode($b['address']) }}" target="_blank" rel="noopener" class="btn btn-outline btn-block">Buka Maps</a>
+                    <a href="{{ $b['maps_url'] }}" target="_blank" rel="noopener" class="btn btn-outline btn-block">Buka Maps</a>
                 </div>
             </div>
             @endforeach
@@ -54,10 +69,18 @@ $branches = [
 
 <section class="cta-band">
     <div class="container">
-        <h2>Siap Booking Sesi Foto Anda?</h2>
-        <p>Pilih cabang terdekat, lalu hubungi kami via WhatsApp untuk booking paket favoritmu.</p>
-        <a href="{{ route('layanan') }}" class="btn btn-light">Lihat Paket Layanan</a>
+        <h2>Siap Mengabadikan Momen Anda?</h2>
+        <p>Pilih cabang terdekat, lalu hubungi kami untuk booking sesi foto Anda.</p>
+        <a href="{{ route('kontak') }}" class="btn btn-light">Hubungi Kami</a>
     </div>
 </section>
+
+<script>
+document.querySelectorAll('[data-map-overlay]').forEach(function (overlay) {
+    overlay.addEventListener('click', function () {
+        overlay.classList.add('is-active');
+    });
+});
+</script>
 
 </x-layout>
