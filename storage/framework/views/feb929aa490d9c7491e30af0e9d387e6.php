@@ -37,6 +37,9 @@ unset($__defined_vars); ?>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="<?php echo e(asset('css/style.css')); ?>">
+<link rel="icon" href="<?php echo e(asset('favicon.ico')); ?>" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="<?php echo e(asset('favicon-32x32.png')); ?>">
+<link rel="apple-touch-icon" sizes="180x180" href="<?php echo e(asset('apple-touch-icon.png')); ?>">
 </head>
 <body>
 <div class="dash-wrap">
@@ -49,7 +52,13 @@ unset($__defined_vars); ?>
             <a href="<?php echo e(route('admin.services.index')); ?>" class="<?php echo e($active === 'services' ? 'active' : ''); ?>">📷 Layanan</a>
             <a href="<?php echo e(route('admin.gallery.index')); ?>" class="<?php echo e($active === 'gallery' ? 'active' : ''); ?>">🖼️ Galeri</a>
             <a href="<?php echo e(route('admin.users.index')); ?>" class="<?php echo e($active === 'users' ? 'active' : ''); ?>">👥 Pengguna</a>
-            <a href="<?php echo e(route('admin.messages.index')); ?>" class="<?php echo e($active === 'messages' ? 'active' : ''); ?>">✉️ Pesan Masuk</a>
+            <a href="<?php echo e(route('admin.messages.index')); ?>" class="<?php echo e($active === 'messages' ? 'active' : ''); ?>">
+                ✉️ Pesan Masuk
+                <?php $unreadMsgCount = \App\Models\ContactMessage::where('is_read', false)->count(); ?>
+                <?php if($unreadMsgCount > 0): ?>
+                    <span class="sidebar-badge"><?php echo e($unreadMsgCount); ?></span>
+                <?php endif; ?>
+            </a>
             <div class="divider"></div>
             <a href="<?php echo e(route('home')); ?>">🌐 Lihat Website</a>
             <a href="<?php echo e(route('logout')); ?>" onclick="event.preventDefault(); document.getElementById('dash-logout-form').submit();">🚪 Keluar</a>

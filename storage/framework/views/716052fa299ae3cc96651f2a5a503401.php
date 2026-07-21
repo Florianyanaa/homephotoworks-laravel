@@ -32,7 +32,7 @@ unset($__defined_vars); ?>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?php echo e($title ? $title . ' — Home Photoworks' : 'Home Photoworks — Studio Foto Profesional'); ?></title>
+<title><?php echo e($title ? $title . 'Home Photoworks' : 'Home Photoworks — Studio Foto Profesional'); ?></title>
 <meta name="description" content="Home Photoworks — Studio foto profesional dengan konsep modern dan elegan. Portrait, prewedding, keluarga, produk, hingga maternity.">
 <link rel="icon" href="<?php echo e(asset('favicon.ico')); ?>" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="<?php echo e(asset('favicon-32x32.png')); ?>">
@@ -46,6 +46,9 @@ unset($__defined_vars); ?>
 <link rel="stylesheet" href="<?php echo e(asset('css/style.css')); ?>">
 </head>
 <body class="<?php echo e(request()->routeIs('home') ? 'is-home' : ''); ?>">
+
+<div class="scroll-progress-bar" id="scrollProgressBar"></div>
+
 
 <div class="page-preloader" id="pagePreloader">
     <div class="page-preloader-logo">HOME <span>PHOTOWORKS</span></div>

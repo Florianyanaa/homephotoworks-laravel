@@ -246,8 +246,9 @@ body.is-home .site-header.scrolled .nav-toggle span { background: var(--black); 
     margin-bottom: 28px;
 }
 .hero-content h1 {
-    font-size: 50px;
-    white-space: nowrap;
+    font-size: 40px;
+    white-space: normal;
+    text-align: center;
     color: var(--white);
     margin-bottom: 22px;
 }
@@ -699,7 +700,7 @@ tbody tr:hover { background: #fafafa; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 980px) {
-    .hero-content h1 { font-size: 36px; }
+    .hero-content h1 { font-size: 32px; }
     .grid-3, .grid-2, .gallery-grid { grid-template-columns: repeat(2, 1fr); }
     .split { grid-template-columns: 1fr; }
     .split img { height: 360px; }
@@ -725,7 +726,7 @@ tbody tr:hover { background: #fafafa; }
     .main-nav.open a { color: var(--near-black) !important; }
     .main-nav.open .nav-cta { border-color: #d9d9d9; }
     .nav-toggle.open span { background: var(--black); }
-    .hero-content h1 { font-size: 30px; white-space: normal; }
+    .hero-content h1 { font-size: 26px; white-space: normal; }
     .grid-3, .grid-2, .gallery-grid, .contact-grid, .form-row, .stats-strip { grid-template-columns: 1fr; }
     .stat-item { border-left: none; border-top: 1px solid #1f1f1f; }
     .stat-item:first-child { border-top: none; }
@@ -990,3 +991,42 @@ tbody tr:hover { background: #fafafa; }
 .dot-available { background: #2fa84f; }
 .dot-busy { background: #e0a721; }
 .dot-full { background: #d64545; }
+
+/* ---------- Scroll progress bar ---------- */
+.scroll-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: var(--near-black);
+    z-index: 300;
+    transition: width 0.12s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+    .scroll-progress-bar { transition: none; }
+}
+
+/* ---------- Tilt 3D kartu layanan ---------- */
+.service-card {
+    transition: transform 0.15s ease-out, box-shadow 0.35s ease;
+    will-change: transform;
+}
+.service-card:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+@media (prefers-reduced-motion: reduce) {
+    .service-card { transition: box-shadow 0.35s ease; }
+}
+
+/* ---------- Judul section muncul kata-per-kata ---------- */
+.word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(45px) rotate(4deg);
+}
+.words-revealed .word {
+    animation: wordFadeUp 0.9s cubic-bezier(.16,.84,.44,1) forwards;
+}
+@keyframes wordFadeUp {
+    to { opacity: 1; transform: translateY(0) rotate(0); }
+}
+

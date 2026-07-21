@@ -341,3 +341,92 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ---------- Progress bar scroll di atas halaman ----------
+    var progressBar = document.getElementById('scrollProgressBar');
+    if (progressBar) {
+        var updateProgress = function () {
+            var scrollTop = window.scrollY;
+            var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            var pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            progressBar.style.width = pct + '%';
+        };
+        window.addEventListener('scroll', updateProgress, { passive: true });
+        window.addEventListener('resize', updateProgress);
+        updateProgress();
+    }
+
+    // ---------- Tilt 3D halus di kartu layanan, ngikutin posisi kursor ----------
+    if (!prefersReducedMotion && window.matchMedia('(hover: hover)').matches) {
+        document.querySelectorAll('.service-card').forEach(function (card) {
+            card.addEventListener('mousemove', function (e) {
+                var bounds = card.getBoundingClientRect();
+                var x = e.clientX - bounds.left;
+                var y = e.clientY - bounds.top;
+                var rotateX = ((y - bounds.height / 2) / (bounds.height / 2)) * -5;
+                var rotateY = ((x - bounds.width / 2) / (bounds.width / 2)) * 5;
+                card.style.transform = 'perspective(900px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateY(-6px)';
+            });
+            card.addEventListener('mouseleave', function () {
+                card.style.transform = '';
+            });
+        });
+    }
+
+    // ---------- Judul muncul kata-per-kata saat halaman dibuka/discroll ----------
+    // Versi node-aware: kalau di dalam judul ada elemen lain (misal <span> kata
+    // yang gonta-ganti di hero), elemen itu tetap dijaga utuh, bukan ikut kebongkar
+    // jadi teks polos.
+    function wrapWordsPreservingElements(heading) {
+        var wordIndex = 0;
+        var fragment = document.createDocumentFragment();
+
+        Array.prototype.slice.call(heading.childNodes).forEach(function (node) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                node.textContent.split(/(\s+)/).forEach(function (part) {
+                    if (part.trim() === '') {
+                        if (part) fragment.appendChild(document.createTextNode(part));
+                        return;
+                    }
+                    var span = document.createElement('span');
+                    span.className = 'word';
+                    span.style.animationDelay = (wordIndex * 150) + 'ms';
+                    span.textContent = part;
+                    fragment.appendChild(span);
+                    wordIndex++;
+                });
+            } else {
+                node.classList.add('word');
+                node.style.animationDelay = (wordIndex * 150) + 'ms';
+                fragment.appendChild(node);
+                wordIndex++;
+            }
+        });
+
+        heading.innerHTML = '';
+        heading.appendChild(fragment);
+    }
+
+    var animatedHeadings = document.querySelectorAll('.section-head h2, .hero-content h1, .page-hero h1');
+    if (animatedHeadings.length) {
+        animatedHeadings.forEach(wrapWordsPreservingElements);
+
+        if ('IntersectionObserver' in window) {
+            var headingObserver = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('words-revealed');
+                        headingObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.4 });
+
+            animatedHeadings.forEach(function (heading) { headingObserver.observe(heading); });
+        } else {
+            animatedHeadings.forEach(function (heading) { heading.classList.add('words-revealed'); });
+        }
+    }
+});
