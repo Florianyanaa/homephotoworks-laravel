@@ -13,6 +13,16 @@
     var ease = 0.1; // 0.05 = lebih "berat"/melambat, 0.2 = lebih responsif
     var isProgrammatic = false; // true selagi step() yang menggerakkan scroll
 
+    // Deteksi trackpad vs mouse fisik. Trackpad mengirim banyak event kecil
+    // secara berturut-turut sangat rapat, sedangkan mouse fisik mengirim
+    // event besar (per "notch") dengan jeda alami di antaranya. Kalau
+    // kedeteksi trackpad, custom easing dimatikan sementara dan scroll
+    // native browser dipakai (trackpad modern sudah smooth secara bawaan) —
+    // ini yang memperbaiki bug "nyangkut" pas discroll pakai trackpad.
+    var lastWheelTime = 0;
+    var rapidEventCount = 0;
+    var isTrackpadGesture = false;
+
     function maxScroll() {
         return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
     }
@@ -40,6 +50,29 @@
         // kasar-halus-kasar yang bikin "glitch" saat kursor keluar-masuk elemen itu.
         var scrollableParent = e.target.closest('select, textarea, .dash-sidebar, .lightbox, [data-native-scroll]');
         if (scrollableParent && scrollableParent.scrollHeight > scrollableParent.clientHeight) {
+            return;
+        }
+
+        var now = performance.now();
+        var timeSinceLast = now - lastWheelTime;
+        lastWheelTime = now;
+
+        if (Math.abs(e.deltaY) < 50 && timeSinceLast < 40) {
+            rapidEventCount++;
+        } else if (timeSinceLast > 200) {
+            rapidEventCount = 0;
+        }
+        isTrackpadGesture = rapidEventCount > 3;
+
+        if (isTrackpadGesture) {
+            // Kemungkinan besar ini trackpad: matikan hijack, biarkan
+            // scroll native browser yang jalan (jangan preventDefault).
+            target = window.scrollY;
+            current = window.scrollY;
+            if (raf) {
+                cancelAnimationFrame(raf);
+                raf = null;
+            }
             return;
         }
 
